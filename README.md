@@ -13,3 +13,6 @@
  - 增加PropertyValues属性，里面存放bean 的初始化属性的值
 2. 修改AutowireCapableBeanFactory
  - 增加读取beanDefinition 中propertyValues中的属性值，赋值给对应的bean
+
+# step-4-config-beanfactory-with-xml
+读取xml 文件来初始化bean
