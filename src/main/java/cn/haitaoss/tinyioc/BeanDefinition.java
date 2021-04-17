@@ -2,18 +2,45 @@ package cn.haitaoss.tinyioc;
 
 /**
  * @author haitao.chen
- * @email 1486504210@qq.com
+ * @email haitaoss@aliyun.com
  * @date 2021-04-17 11:15
  *
  */
 public class BeanDefinition {
     private Object bean;
+    private Class beanClass;
+    private String beanClassName;
 
-    public BeanDefinition(Object bean) {
-        this.bean = bean;
+    public BeanDefinition() {
     }
 
     public Object getBean() {
         return bean;
+    }
+
+    public void setBean(Object bean) {
+        this.bean = bean;
+    }
+
+    public Class getBeanClass() {
+        return beanClass;
+    }
+
+    public void setBeanClass(Class beanClass) {
+        this.beanClass = beanClass;
+    }
+
+    public String getBeanClassName() {
+        return beanClassName;
+    }
+
+    public void setBeanClassName(String beanClassName) {
+        this.beanClassName = beanClassName;
+        try {
+            this.beanClass = Class.forName(beanClassName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 }
