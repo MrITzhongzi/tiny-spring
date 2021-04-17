@@ -13,28 +13,6 @@ import java.lang.reflect.Field;
  *  可自动装配内容的BeanFactory
  */
 public class AutowireCapableBeanFactory extends AbstractBeanFactory {
-    @Override
-    protected Object doCreateBean(BeanDefinition beanDefinition) throws Exception {
-        // 创建bean
-        Object instance = createBeanInstance(beanDefinition);
-        beanDefinition.setBean(instance);
-        // 对属性进行复制
-        applyPropertyValues(instance, beanDefinition);
-        return instance;
-    }
-
-    /**
-     * 创建对象
-     * @author haitao.chen
-     * @email
-     * @date 2021/4/17 1:25 下午
-     * @param beanDefinition
-     * @return java.lang.Object
-     */
-    protected Object createBeanInstance(BeanDefinition beanDefinition) throws Exception {
-        return beanDefinition.getBeanClass().newInstance();
-    }
-
     /**
      * 设置属性的值
      * @author haitao.chen

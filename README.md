@@ -41,3 +41,6 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
         return methodInterceptor.invoke(new ReflectiveMethodInvocation(advise.getTargetSource().getTarget(), method, args));
     }
 ```
+
+# step-8-invite-pointcut-and-aspectj
+加入切入点和 beanPostProcessor

@@ -23,10 +23,17 @@
             <version>4.7</version>
             <scope>test</scope>
         </dependency>
+        <!-- 代理常用的接口 -->
         <dependency>
             <groupId>aopalliance</groupId>
             <artifactId>aopalliance</artifactId>
             <version>1.0</version>
+        </dependency>
+        <!-- spring 提供的校验切入点表达式的jar -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.6.11</version>
         </dependency>
     </dependencies>
 
