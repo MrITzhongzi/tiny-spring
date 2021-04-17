@@ -1,7 +1,6 @@
 package cn.haitaoss.tinyioc;
 
 import cn.haitaoss.tinyioc.factory.AutowireCapableBeanFactory;
-import cn.haitaoss.tinyioc.factory.BeanFactory;
 import org.junit.Test;
 
 /**
@@ -12,16 +11,24 @@ import org.junit.Test;
  */
 public class BeanFactoryTest {
     @Test
-    public void test() {
-        // 初始化beanFactory
-        BeanFactory beanFactory = new AutowireCapableBeanFactory();
+    public void test() throws Exception {
+        // 1.初始化beanFactory
+        AutowireCapableBeanFactory beanFactory = new AutowireCapableBeanFactory();
 
-        // 注入bean
+        // 2.bean定义
         BeanDefinition beanDefinition = new BeanDefinition();
         beanDefinition.setBeanClassName("cn.haitaoss.tinyioc.HelloWorldService");
+
+
+        // 3.设置属性
+        PropertyValues propertyValues = new PropertyValues();
+        propertyValues.addPropertyValue(new PropertyValue("text","hello world!!!!"));
+        beanDefinition.setPropertyValues(propertyValues);
+
+        // 4.生成bean
         beanFactory.registerBeanDefinition("helloWorldService", beanDefinition);
 
-        // 获取bean
+        // 5.获取bean
         HelloWorldService helloWorldService = (HelloWorldService) beanFactory.getBean("helloWorldService");
         helloWorldService.helloWorld();
 
