@@ -1,6 +1,7 @@
 package cn.haitaoss.tinyioc.factory;
 
 import cn.haitaoss.tinyioc.BeanDefinition;
+import cn.haitaoss.tinyioc.BeanReference;
 import cn.haitaoss.tinyioc.PropertyValue;
 
 import java.lang.reflect.Field;
@@ -16,6 +17,7 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
     protected Object doCreateBean(BeanDefinition beanDefinition) throws Exception {
         // 创建bean
         Object instance = createBeanInstance(beanDefinition);
+        beanDefinition.setBean(instance);
         // 对属性进行复制
         applyPropertyValues(instance, beanDefinition);
         return instance;
@@ -32,6 +34,7 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
     protected Object createBeanInstance(BeanDefinition beanDefinition) throws Exception {
         return beanDefinition.getBeanClass().newInstance();
     }
+
     /**
      * 设置属性的值
      * @author haitao.chen
@@ -45,7 +48,12 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
         for (PropertyValue propertyValue : beanDefinition.getPropertyValues().getPropertyValueList()) {
             Field field = aClass.getDeclaredField(propertyValue.getName());
             field.setAccessible(true);
-            field.set(instance, propertyValue.getValue());
+            Object value = propertyValue.getValue();
+            if (value instanceof BeanReference) {
+                BeanReference beanReference = (BeanReference) value;
+                value = getBean(beanReference.getName());
+            }
+            field.set(instance, value);
         }
     }
 }

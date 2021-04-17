@@ -2,6 +2,7 @@ package cn.haitaoss.tinyioc.xml;
 
 import cn.haitaoss.tinyioc.AbstractBeanDefinitionReader;
 import cn.haitaoss.tinyioc.BeanDefinition;
+import cn.haitaoss.tinyioc.BeanReference;
 import cn.haitaoss.tinyioc.PropertyValue;
 import cn.haitaoss.tinyioc.io.ResourceLoader;
 import org.w3c.dom.Document;
@@ -44,28 +45,28 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
     private void registerBeanDefinitions(Document doc) {
         Element root = doc.getDocumentElement();
-		parseBeanDefinitions(root);
+        parseBeanDefinitions(root);
     }
 
     private void parseBeanDefinitions(Element root) {
         NodeList nl = root.getChildNodes();
-		for (int i = 0; i < nl.getLength(); i++) {
-			Node node = nl.item(i);
-			if (node instanceof Element) {
-				Element ele = (Element) node;
-				processBeanDefinition(ele);
-			}
-		}
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node node = nl.item(i);
+            if (node instanceof Element) {
+                Element ele = (Element) node;
+                processBeanDefinition(ele);
+            }
+        }
 
     }
 
     private void processBeanDefinition(Element ele) {
         String name = ele.getAttribute("name");
-		String className = ele.getAttribute("class");
+        String className = ele.getAttribute("class");
         BeanDefinition beanDefinition = new BeanDefinition();
-        processProperty(ele,beanDefinition);
+        processProperty(ele, beanDefinition);
         beanDefinition.setBeanClassName(className);
-		getRegistry().put(name, beanDefinition);
+        getRegistry().put(name, beanDefinition);
 
     }
 
@@ -77,7 +78,17 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 Element propertyEle = (Element) node;
                 String name = propertyEle.getAttribute("name");
                 String value = propertyEle.getAttribute("value");
-                beanDefinition.getPropertyValues().addPropertyValue(new PropertyValue(name,value));
+                if (value != null && value.length() > 0) {
+                    beanDefinition.getPropertyValues().addPropertyValue(new PropertyValue(name, value));
+                } else {
+                    String ref = propertyEle.getAttribute("ref");
+                    if (ref == null || ref.length() == 0) {
+                        throw new IllegalArgumentException("Configuration problem: <property> element for property '"
+                                + name + "' must specify a ref or value");
+                    }
+                    BeanReference beanReference = new BeanReference(ref);
+                    beanDefinition.getPropertyValues().addPropertyValue(new PropertyValue(name, beanReference));
+                }
             }
         }
     }
