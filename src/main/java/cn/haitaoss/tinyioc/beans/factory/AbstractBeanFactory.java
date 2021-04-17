@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class AbstractBeanFactory implements BeanFactory {
     private final List<String> beanDefinitionNames = new ArrayList<>();
-    private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
+    private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
 
     /**
      * 创建单例bean
@@ -26,7 +26,7 @@ public abstract class AbstractBeanFactory implements BeanFactory {
      * @return java.lang.Object
      */
     @Override
-    public Object getBean(String name) throws Exception{
+    public Object getBean(String name) throws Exception {
         BeanDefinition beanDefinition = beanDefinitionMap.get(name);
         if (beanDefinition == null) {
             throw new IllegalArgumentException("No bean named " + name + "is defined");

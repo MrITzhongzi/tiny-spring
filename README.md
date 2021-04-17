@@ -29,3 +29,15 @@
 为bean注入bean。通过BeanReference 表示这个属性是一个bean对象，他的值应该从IOC容器中获取
 
 # step-6-invite-application-context
+
+# step-7-method-interceptor-by-jdk-dynamic-proxy
+- AdvisedSupport 里面有TargetSource 和 MethodInterceptor
+  - TargetSource：里面包含被代理对象 和 被代理对象的接口
+  - MethodInterceptor：当前被代理对象需要增加的功能
+- 因为每个被代理对象需要增加的功能可能不一样，所以我们把被代理对象需要增加的功能放到advise 中
+```java
+public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        MethodInterceptor methodInterceptor = advise.getMethodInterceptor();
+        return methodInterceptor.invoke(new ReflectiveMethodInvocation(advise.getTargetSource().getTarget(), method, args));
+    }
+```

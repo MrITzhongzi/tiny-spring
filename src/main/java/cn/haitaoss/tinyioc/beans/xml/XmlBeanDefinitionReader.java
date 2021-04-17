@@ -1,7 +1,7 @@
 package cn.haitaoss.tinyioc.beans.xml;
 
-import cn.haitaoss.tinyioc.beans.AbstractBeanDefinitionReader;
 import cn.haitaoss.tinyioc.BeanDefinition;
+import cn.haitaoss.tinyioc.beans.AbstractBeanDefinitionReader;
 import cn.haitaoss.tinyioc.beans.BeanReference;
 import cn.haitaoss.tinyioc.beans.PropertyValue;
 import cn.haitaoss.tinyioc.beans.io.ResourceLoader;

@@ -8,8 +8,8 @@ import java.net.URL;
  * @date 2021-04-17 14:07
  *
  */
-public class ResourceLoader{
-    public Resource getResource(String location) throws Exception{
+public class ResourceLoader {
+    public Resource getResource(String location) throws Exception {
         URL resource = this.getClass().getClassLoader().getResource(location);
         return new URLResource(resource);
     }

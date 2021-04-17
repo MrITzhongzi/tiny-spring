@@ -2,6 +2,7 @@ package cn.haitaoss.tinyioc.context;
 
 import cn.haitaoss.tinyioc.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.factory.AbstractBeanFactory;
+import cn.haitaoss.tinyioc.beans.factory.AutowireCapableBeanFactory;
 import cn.haitaoss.tinyioc.beans.io.ResourceLoader;
 import cn.haitaoss.tinyioc.beans.xml.XmlBeanDefinitionReader;
 
@@ -14,7 +15,11 @@ import java.util.Map;
  *
  */
 public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
-    private String configLocation;
+    private final String configLocation;
+
+    public ClassPathXmlApplicationContext(String configLocation) throws Exception {
+        this(configLocation, new AutowireCapableBeanFactory());
+    }
 
     public ClassPathXmlApplicationContext(String configLocation, AbstractBeanFactory beanFactory) throws Exception {
         super(beanFactory);
