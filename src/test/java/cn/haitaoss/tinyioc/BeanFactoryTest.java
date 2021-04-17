@@ -1,9 +1,9 @@
 package cn.haitaoss.tinyioc;
 
-import cn.haitaoss.tinyioc.factory.AbstractBeanFactory;
-import cn.haitaoss.tinyioc.factory.AutowireCapableBeanFactory;
-import cn.haitaoss.tinyioc.io.ResourceLoader;
-import cn.haitaoss.tinyioc.xml.XmlBeanDefinitionReader;
+import cn.haitaoss.tinyioc.beans.factory.AbstractBeanFactory;
+import cn.haitaoss.tinyioc.beans.factory.AutowireCapableBeanFactory;
+import cn.haitaoss.tinyioc.beans.io.ResourceLoader;
+import cn.haitaoss.tinyioc.beans.xml.XmlBeanDefinitionReader;
 import org.junit.Test;
 
 import java.util.Map;

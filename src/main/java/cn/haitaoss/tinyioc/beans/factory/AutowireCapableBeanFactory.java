@@ -1,8 +1,8 @@
-package cn.haitaoss.tinyioc.factory;
+package cn.haitaoss.tinyioc.beans.factory;
 
 import cn.haitaoss.tinyioc.BeanDefinition;
-import cn.haitaoss.tinyioc.BeanReference;
-import cn.haitaoss.tinyioc.PropertyValue;
+import cn.haitaoss.tinyioc.beans.BeanReference;
+import cn.haitaoss.tinyioc.beans.PropertyValue;
 
 import java.lang.reflect.Field;
 

@@ -1,10 +1,10 @@
-package cn.haitaoss.tinyioc.xml;
+package cn.haitaoss.tinyioc.beans.xml;
 
-import cn.haitaoss.tinyioc.AbstractBeanDefinitionReader;
+import cn.haitaoss.tinyioc.beans.AbstractBeanDefinitionReader;
 import cn.haitaoss.tinyioc.BeanDefinition;
-import cn.haitaoss.tinyioc.BeanReference;
-import cn.haitaoss.tinyioc.PropertyValue;
-import cn.haitaoss.tinyioc.io.ResourceLoader;
+import cn.haitaoss.tinyioc.beans.BeanReference;
+import cn.haitaoss.tinyioc.beans.PropertyValue;
+import cn.haitaoss.tinyioc.beans.io.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

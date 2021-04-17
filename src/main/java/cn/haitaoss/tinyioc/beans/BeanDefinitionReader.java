@@ -1,4 +1,4 @@
-package cn.haitaoss.tinyioc;
+package cn.haitaoss.tinyioc.beans;
 
 /**
  * @author haitao.chen

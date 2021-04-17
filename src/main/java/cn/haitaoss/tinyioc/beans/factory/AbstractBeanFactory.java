@@ -1,4 +1,4 @@
-package cn.haitaoss.tinyioc.factory;
+package cn.haitaoss.tinyioc.beans.factory;
 
 import cn.haitaoss.tinyioc.BeanDefinition;
 
@@ -38,7 +38,6 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         return bean;
     }
 
-    @Override
     public void registerBeanDefinition(String name, BeanDefinition beanDefinition) throws Exception {
         beanDefinitionMap.put(name, beanDefinition);
         beanDefinitionNames.add(name);

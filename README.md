@@ -27,3 +27,5 @@
 # step-5-inject-bean-to-bean
 
 为bean注入bean。通过BeanReference 表示这个属性是一个bean对象，他的值应该从IOC容器中获取
+
+# step-6-invite-application-context

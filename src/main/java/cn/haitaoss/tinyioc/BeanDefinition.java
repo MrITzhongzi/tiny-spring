@@ -1,5 +1,7 @@
 package cn.haitaoss.tinyioc;
 
+import cn.haitaoss.tinyioc.beans.PropertyValues;
+
 /**
  * @author haitao.chen
  * @email haitaoss@aliyun.com

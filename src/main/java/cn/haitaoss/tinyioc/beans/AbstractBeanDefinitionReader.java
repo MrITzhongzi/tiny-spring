@@ -1,7 +1,8 @@
-package cn.haitaoss.tinyioc;
+package cn.haitaoss.tinyioc.beans;
 
 
-import cn.haitaoss.tinyioc.io.ResourceLoader;
+import cn.haitaoss.tinyioc.BeanDefinition;
+import cn.haitaoss.tinyioc.beans.io.ResourceLoader;
 
 import java.util.HashMap;
 import java.util.Map;

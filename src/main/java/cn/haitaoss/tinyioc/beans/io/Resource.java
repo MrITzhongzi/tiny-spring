@@ -1,4 +1,4 @@
-package cn.haitaoss.tinyioc.io;
+package cn.haitaoss.tinyioc.beans.io;
 
 import java.io.InputStream;
 
