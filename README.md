@@ -172,3 +172,29 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
         }
     }
     ```
+
+# step-10-invite-cglib-and-aopproxy-factory
+
+# 项目中用到的依赖是什么
+## aopalliance
+```xml
+<dependency>
+    <groupId>aopalliance</groupId>
+    <artifactId>aopalliance</artifactId>
+    <version>1.0</version>
+</dependency>
+```
+AOP Alliance 是AOP的接口标准，定义了 AOP 中的基础概念(Advice、CutPoint、Advisor等)，目标是为各种AOP实现提供统一的接口，本身并不是一种 AOP 的实现。Spring AOP, GUICE等都采用了AOP Alliance中定义的接口，因而这些lib都需要依赖 aopalliance.jar
+
+## aspectjweaver
+```xml
+<dependency>
+    <groupId>org.aspectj</groupId>
+    <artifactId>aspectjweaver</artifactId>
+    <version>1.6.11</version>
+</dependency>
+```
+可以帮我们校验切入点表达式。比如`execution(* cn.haitaoss.tinyioc.HelloWorldService.sayHello(..))`
+
+## cglib
+比jdk代理强，能代理类 

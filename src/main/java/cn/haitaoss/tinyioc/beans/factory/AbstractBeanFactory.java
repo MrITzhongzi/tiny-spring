@@ -75,6 +75,8 @@ public abstract class AbstractBeanFactory implements BeanFactory {
     protected Object doCreateBean(BeanDefinition beanDefinition) throws Exception {
         Object bean = createBeanInstance(beanDefinition);
         beanDefinition.setBean(bean);
+        // a ref b
+        // a ref b , b ref c ,c ref a
         applyPropertyValues(bean, beanDefinition);
         return bean;
     }

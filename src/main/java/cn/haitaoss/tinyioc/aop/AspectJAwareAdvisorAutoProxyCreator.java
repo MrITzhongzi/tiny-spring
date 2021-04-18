@@ -43,14 +43,14 @@ public class AspectJAwareAdvisorAutoProxyCreator implements BeanPostProcessor, B
             // execution(* cn.haitaoss.tinyioc.*.*(..))
             if (advisor.getPointcut().getClassFilter().matches(bean.getClass())) {
 
-                AdvisedSupport advisedSupport = new AdvisedSupport();
+                ProxyFactory advisedSupport = new ProxyFactory();
                 advisedSupport.setMethodInterceptor((MethodInterceptor) advisor.getAdvice()); // 增强方法
                 advisedSupport.setMethodMatcher(advisor.getPointcut().getMethodMatcher()); // 方法校验器
 
-                TargetSource targetSource = new TargetSource(bean, bean.getClass().getInterfaces()); // 被代理对象 和 被代理对象的接口
+                TargetSource targetSource = new TargetSource(bean, bean.getClass(), bean.getClass().getInterfaces());
                 advisedSupport.setTargetSource(targetSource);
 
-                return new JdkDynamicAopProxy(advisedSupport).getProxy();
+               return advisedSupport.getProxy();
             }
         }
         return bean;
