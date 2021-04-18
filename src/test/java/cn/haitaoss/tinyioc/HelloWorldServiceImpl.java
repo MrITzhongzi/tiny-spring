@@ -15,6 +15,11 @@ public class HelloWorldServiceImpl implements HelloWorldService {
         outputService.output(text);
     }
 
+    @Override
+    public void sayHello() {
+        System.out.println("只代理这个翻翻");
+    }
+
     public void setText(String text) {
         this.text = text;
     }

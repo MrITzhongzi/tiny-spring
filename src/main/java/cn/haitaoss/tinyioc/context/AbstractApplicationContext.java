@@ -19,13 +19,19 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     }
 
     public void refresh() throws Exception {
+        // 将读取xml 获取的容器复制到 beanFactory中
         loadBeanDefinitions(beanFactory);
+        // 注册beanPostProcessor
         registerBeanPostProcessors(beanFactory);
+        // 创建出ioc容器中所有的对象
         onRefresh();
     }
 
     protected void registerBeanPostProcessors(AbstractBeanFactory beanFactory) throws Exception {
+        // 从容器中获取所有的BeanPostProcessor
         List beanPostProcessors = beanFactory.getBeansForType(BeanPostProcessor.class);
+
+        // beanPostProcessor
         for (Object beanPostProcessor : beanPostProcessors) {
             beanFactory.addBeanPostProcessor((BeanPostProcessor) beanPostProcessor);
         }

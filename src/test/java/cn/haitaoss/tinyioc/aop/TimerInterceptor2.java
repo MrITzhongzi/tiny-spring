@@ -9,18 +9,14 @@ import org.aopalliance.intercept.MethodInvocation;
  * @date 2021-04-17 17:29
  *
  */
-public class TimerInterceptor implements MethodInterceptor {
+public class TimerInterceptor2 implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        long time = System.nanoTime();
-        System.out.println("Invocation of Method " + invocation.getMethod().getName() + " start!");
+        System.out.println("2222222我不会生效");
 
         Object proceed = invocation.proceed();
 
-
-        System.out.println("Invocation of Method " + invocation.getMethod().getName() + " end! takes " + (System.nanoTime() - time)
-                + " nanoseconds.");
         return proceed;
     }
 }

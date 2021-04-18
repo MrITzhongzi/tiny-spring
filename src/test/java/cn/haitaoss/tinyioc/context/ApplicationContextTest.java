@@ -19,10 +19,18 @@ public class ApplicationContextTest {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(configLocation, beanFactory);
 
         HelloWorldService helloWorldService = (HelloWorldService) context.getBean("helloWorldService");
-        helloWorldService.helloWorld();
-
+        // helloWorldService.helloWorld();
+        helloWorldService.sayHello();
         OutputService outputService = (OutputService) context.getBean("outputService");
-        outputService.output("hello world");
+        // outputService.output("hello world");
+        outputService.sayHello();
 
+    }
+
+    @Test
+    public void testPostBeanProcessor() throws Exception {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("tinyioc-postbeanprocessor.xml");
+        HelloWorldService helloWorldService = (HelloWorldService) applicationContext.getBean("helloWorldService");
+        helloWorldService.helloWorld();
     }
 }

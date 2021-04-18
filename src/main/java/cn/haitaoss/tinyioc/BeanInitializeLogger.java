@@ -12,6 +12,8 @@ public class BeanInitializeLogger implements BeanPostProcessor {
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws Exception {
         System.out.println("Initialize bean " + beanName + " start!");
+        // createDate
+        // bean.getClass().getDeclaredField("createDate").set(bean,new Date());
         return bean;
     }
 

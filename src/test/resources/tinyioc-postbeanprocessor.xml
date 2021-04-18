@@ -3,15 +3,15 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean name="outputService" class="cn.haitaoss.tinyioc.OutputService">
-        <property name="helloWorldService" ref="helloWorldService"></property>
+    <bean id="outputService" class="cn.haitaoss.tinyioc.OutputServiceImpl">
     </bean>
 
-    <bean name="helloWorldService" class="cn.haitaoss.tinyioc.HelloWorldServiceImpl">
+    <bean id="helloWorldService" class="cn.haitaoss.tinyioc.HelloWorldServiceImpl">
         <property name="text" value="Hello World!"></property>
         <property name="outputService" ref="outputService"></property>
     </bean>
 
-    <bean name="beanInitializeLogger" class="cn.haitaoss.tinyioc.BeanInitializeLogger">
+    <bean id="beanInitializeLogger" class="cn.haitaoss.tinyioc.BeanInitializeLogger">
     </bean>
+
 </beans>

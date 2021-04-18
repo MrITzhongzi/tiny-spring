@@ -1,10 +1,12 @@
 package cn.haitaoss.tinyioc.beans.factory;
 
 import cn.haitaoss.tinyioc.BeanDefinition;
+import cn.haitaoss.tinyioc.aop.BeanFactoryAware;
 import cn.haitaoss.tinyioc.beans.BeanReference;
 import cn.haitaoss.tinyioc.beans.PropertyValue;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * @author haitao.chen
@@ -22,16 +24,30 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
      * @param beanDefinition
      */
     protected void applyPropertyValues(Object instance, BeanDefinition beanDefinition) throws Exception {
-        Class<?> aClass = instance.getClass();
+        // 这一步是为了实现 aop
+        if (instance instanceof BeanFactoryAware) {
+            ((BeanFactoryAware) instance).setBeanFactory(this);
+        }
+
         for (PropertyValue propertyValue : beanDefinition.getPropertyValues().getPropertyValueList()) {
-            Field field = aClass.getDeclaredField(propertyValue.getName());
-            field.setAccessible(true);
             Object value = propertyValue.getValue();
             if (value instanceof BeanReference) {
                 BeanReference beanReference = (BeanReference) value;
                 value = getBean(beanReference.getName());
             }
-            field.set(instance, value);
+            try {
+                Method declaredMethod = instance.getClass().getDeclaredMethod(
+                        "set" + propertyValue.getName().substring(0, 1).toUpperCase()
+                                + propertyValue.getName().substring(1), value.getClass());
+                declaredMethod.setAccessible(true);
+
+                declaredMethod.invoke(instance, value);
+            } catch (NoSuchMethodException e) {
+                // 没有提供set方法也设置
+                Field declaredField = instance.getClass().getDeclaredField(propertyValue.getName());
+                declaredField.setAccessible(true);
+                declaredField.set(instance, value);
+            }
         }
     }
 }

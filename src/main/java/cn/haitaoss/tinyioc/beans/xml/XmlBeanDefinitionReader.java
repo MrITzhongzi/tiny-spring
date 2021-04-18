@@ -44,12 +44,12 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     }
 
     private void registerBeanDefinitions(Document doc) {
-        Element root = doc.getDocumentElement();
+        Element root = doc.getDocumentElement(); // beans
         parseBeanDefinitions(root);
     }
 
     private void parseBeanDefinitions(Element root) {
-        NodeList nl = root.getChildNodes();
+        NodeList nl = root.getChildNodes(); // bean
         for (int i = 0; i < nl.getLength(); i++) {
             Node node = nl.item(i);
             if (node instanceof Element) {
@@ -61,7 +61,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     }
 
     private void processBeanDefinition(Element ele) {
-        String name = ele.getAttribute("name");
+        String name = ele.getAttribute("id");
         String className = ele.getAttribute("class");
         BeanDefinition beanDefinition = new BeanDefinition();
         processProperty(ele, beanDefinition);
@@ -86,7 +86,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                         throw new IllegalArgumentException("Configuration problem: <property> element for property '"
                                 + name + "' must specify a ref or value");
                     }
-                    BeanReference beanReference = new BeanReference(ref);
+                    BeanReference beanReference = new BeanReference(ref); //
                     beanDefinition.getPropertyValues().addPropertyValue(new PropertyValue(name, beanReference));
                 }
             }

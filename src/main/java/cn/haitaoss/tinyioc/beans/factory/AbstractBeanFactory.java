@@ -15,9 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 public abstract class AbstractBeanFactory implements BeanFactory {
-    private final List<String> beanDefinitionNames = new ArrayList<>();
-    private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
-    private List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
+    private final List<String> beanDefinitionNames = new ArrayList<>();  // 记录所有bean的名字，用于提前创建bean还有就是收集beanpostProcessor
+    private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(); // 容器
+    private List<BeanPostProcessor> beanPostProcessors = new ArrayList<>(); // 记录容器中所有的beanPostProcessor
 
     /**
      * 创建单例bean
@@ -33,17 +33,19 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         if (beanDefinition == null) {
             throw new IllegalArgumentException("No bean named " + name + "is defined");
         }
-        Object bean = beanDefinition.getBean();
+        Object bean = beanDefinition.getBean(); // null
         if (bean == null) {
             bean = doCreateBean(beanDefinition);
-            initializeBean(bean, name);
+            bean = initializeBean(bean, name); // 代理操作
+            // 将操作过的bean重新设置到beanDefinition中
+            beanDefinition.setBean(bean); // 修改beandefinition 里面的bean
         }
         return bean;
     }
 
-    protected void initializeBean(Object bean, String name) throws Exception {
+    protected Object initializeBean(Object bean, String name) throws Exception {
         //  初始化前操作
-        for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
+        for (BeanPostProcessor beanPostProcessor : beanPostProcessors) { // beanPostProcessors.size() = 0
             bean = beanPostProcessor.postProcessBeforeInitialization(bean, name);
         }
         // 省略 bean 的初始化操作
@@ -52,6 +54,7 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
             bean = beanPostProcessor.postProcessAfterInitialization(bean, name);
         }
+        return bean;
     }
 
     protected Object createBeanInstance(BeanDefinition beanDefinition) throws Exception {
@@ -67,7 +70,6 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         for (String beanName : beanDefinitionNames) {
             getBean(beanName);
         }
-
     }
 
     protected Object doCreateBean(BeanDefinition beanDefinition) throws Exception {
@@ -85,11 +87,20 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         this.beanPostProcessors.add(beanPostProcessor);
     }
 
+    /**
+     * 从容器中获取BeanPostProcessor 的子类或者子接口
+     * @author haitao.chen
+     * @email
+     * @date 2021/4/17 9:28 下午
+     * @param type
+     * @return java.util.List
+     */
     public List getBeansForType(Class type) throws Exception {
+        // BeanPostProcessor.class
         List beans = new ArrayList<Object>();
         for (String beanDefinitionName : beanDefinitionNames) {
             // class2是不是class1的子类或者子接口
-            // class1.isAssignableFrom(class2)
+            // class1.isAssignableFrom(class2) AspectJAwareAdvisorAutoProxyCreator
             if (type.isAssignableFrom(beanDefinitionMap.get(beanDefinitionName).getBeanClass())) {
                 beans.add(getBean(beanDefinitionName));
             }

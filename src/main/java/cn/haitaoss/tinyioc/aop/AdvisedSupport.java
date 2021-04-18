@@ -12,6 +12,15 @@ import org.aopalliance.intercept.MethodInterceptor;
 public class AdvisedSupport {
     private TargetSource targetSource;
     private MethodInterceptor methodInterceptor;
+    private MethodMatcher methodMatcher; // 切面编程需要的东西
+
+    public MethodMatcher getMethodMatcher() {
+        return methodMatcher;
+    }
+
+    public void setMethodMatcher(MethodMatcher methodMatcher) {
+        this.methodMatcher = methodMatcher;
+    }
 
     public TargetSource getTargetSource() {
         return targetSource;

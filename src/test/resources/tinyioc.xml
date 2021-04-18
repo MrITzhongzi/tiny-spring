@@ -3,15 +3,34 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean name="outputService" class="cn.haitaoss.tinyioc.OutputService">
-        <property name="helloWorldService" ref="helloWorldService"></property>
+    <!--    增强方法-->
+    <bean id="timeInterceptor" class="cn.haitaoss.tinyioc.aop.TimerInterceptor"></bean>
+    <bean id="timeInterceptor2" class="cn.haitaoss.tinyioc.aop.TimerInterceptor2"></bean>
+
+    <!--    为了整合aop 倒容器中的 BeanPostProcessor-->
+    <bean id="autoProxyCreator" class="cn.haitaoss.tinyioc.aop.AspectJAwareAdvisorAutoProxyCreator"></bean>
+
+
+<!--    <bean id="beanInitializeLogger" class="cn.haitaoss.tinyioc.BeanInitializeLogger"></bean>-->
+
+    <!--    增强器-->
+    <bean id="aspectjAspect" class="cn.haitaoss.tinyioc.aop.AspectJExpressionPointcutAdvisor">
+        <property name="advice" ref="timeInterceptor"></property>
+        <property name="expression" value="execution(* cn.haitaoss.tinyioc.HelloWorldService.sayHello(..))"></property>
+    </bean>
+      <bean id="aspectjAspect2" class="cn.haitaoss.tinyioc.aop.AspectJExpressionPointcutAdvisor">
+        <property name="advice" ref="timeInterceptor2"></property>
+        <property name="expression" value="execution(* cn.haitaoss.tinyioc.HelloWorldService.sayHello(..))"></property>
     </bean>
 
-    <bean name="helloWorldService" class="cn.haitaoss.tinyioc.HelloWorldServiceImpl">
+
+    <bean id="outputService" class="cn.haitaoss.tinyioc.OutputServiceImpl">
+    </bean>
+
+    <bean id="helloWorldService" class="cn.haitaoss.tinyioc.HelloWorldServiceImpl">
         <property name="text" value="Hello World!"></property>
         <property name="outputService" ref="outputService"></property>
+
     </bean>
 
-    <bean name="beanInitializeLogger" class="cn.haitaoss.tinyioc.BeanInitializeLogger">
-    </bean>
 </beans>

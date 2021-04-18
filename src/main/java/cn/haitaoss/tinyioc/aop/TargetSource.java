@@ -7,15 +7,15 @@ package cn.haitaoss.tinyioc.aop;
  * 被代理的对象
  */
 public class TargetSource {
-    private final Class targetClass;
     private final Object target;
+    private Class<?>[] targetClass;
 
-    public TargetSource(Object target, Class<?> targetClass) {
+    public TargetSource(Object target, Class<?>... targetClass) {
         this.targetClass = targetClass;
         this.target = target;
     }
 
-    public Class getTargetClass() {
+    public Class<?>[] getTargetClass() {
         return targetClass;
     }
 

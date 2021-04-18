@@ -14,22 +14,35 @@ import java.lang.reflect.Proxy;
  *
  */
 public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
-    private final AdvisedSupport advise;
+    private final AdvisedSupport advised;
 
     public JdkDynamicAopProxy(AdvisedSupport advise) {
-        this.advise = advise;
+        this.advised = advise;
     }
 
     @Override
     public Object getProxy() {
-        return Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class[]{advise.getTargetSource().getTargetClass()},
+        return Proxy.newProxyInstance(
+                getClass().getClassLoader(),
+                advised.getTargetSource().getTargetClass(),
                 this);
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        MethodInterceptor methodInterceptor = advise.getMethodInterceptor();
-        return methodInterceptor.invoke(new ReflectiveMethodInvocation(advise.getTargetSource().getTarget(), method, args));
+
+        MethodInterceptor methodInterceptor = advised.getMethodInterceptor(); // 获取增强方法
+
+        // 通过切面表达式实现只代理符合切入点表达式的方法
+        if (advised.getMethodMatcher() != null
+                && advised.getMethodMatcher().matches(method, advised.getTargetSource().getTarget().getClass())) {
+
+            // 被代理
+            return methodInterceptor.invoke(new ReflectiveMethodInvocation(advised.getTargetSource().getTarget(),
+                    method, args));
+        } else {
+            // 不被代理
+            return method.invoke(advised.getTargetSource().getTarget(), args);
+        }
     }
 }
