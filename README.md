@@ -1,3 +1,6 @@
+# 来源
+原作者：https://github.com/code4craft/tiny-spring
+参考的博客：https://blog.csdn.net/w8253497062015/article/details/90274387#%E7%90%86%E8%A7%A3%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F
 # step-1-container-register-and-get
 
 1. 定义BeanDefinition
@@ -177,17 +180,32 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 
 # 使用三级缓存解决循环引用缺少代理对象的问题
 > 基础知识
+
 firstCache：存储的是完整初始化过后的对象
 secondCache：存储的是属性值有问题的对象（待容器初始化完全后，会拿出这里的对象重新赋值）
 thirdCache：存储的是无参构造器初始化的对象
 
+> 功能
+
+firstCache
+    - 判断当前bean是否应该放入二级缓存
+    - 容器完成初始化之后，需要对二级缓存里面的bean的属性重新赋值。值保存在三级缓存中（其实也能从beanFactory.beanDefinitionMap 中拿）
+secondCache
+    - 保存属性赋值有问题的bean
+thirdCache
+    - 校验一个bean 是否应该放入二级缓存
+    - 记录这个bean 没有被代理之前的类型，为bean 重新赋值的时候需要反射获取原始类型
+
+
 > 流程
+
 1. 利用无参构造器初始化对象之后将这个对象存入thirdCache
 2. 给对象属性赋值时，如果当前属性是引用属性，需要判断这个属性值在三级缓存中是否存在，不存在就将该对象存入secondCache，表示这个对象的属性值并不完整后续需要修改
 3. 对象完成完整的初始化流程之后，要把这个对象存入firstCache
 4. 所有的对象已经操作完了。遍历secondCache，如果有值说明这个对象里面的属性需要重新赋值。找到这个对象里面属性值类型为ref的属性。从firstCache 取出来赋值进去。
 
 > 缺点
+
 通过反射赋值的时候有问题，因为类型匹配不对。解决办法对象的属性类型写实现类别写接口
 ```java
  Method declaredMethod = realClassInvokeBean.getClass().getDeclaredMethod("set" + propertyValue.getName().substring(0, 1).toUpperCase()
