@@ -49,7 +49,6 @@ public class Cglib2AopProxy extends AbstractAopProxy {
             // return method.invoke(advised.getTargetSource().getTarget(),args); // 这样子写省事
         }
     }
-
     private static class CglibMethodInvocation extends ReflectiveMethodInvocation {
 
         private final MethodProxy methodProxy;

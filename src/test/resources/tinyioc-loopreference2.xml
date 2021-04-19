@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!--    增强方法-->
+    <bean id="timeInterceptor" class="cn.haitaoss.tinyioc.aop.TimerInterceptor"></bean>
+
+    <!--    为了整合aop 倒容器中的 BeanPostProcessor-->
+    <bean id="autoProxyCreator" class="cn.haitaoss.tinyioc.aop.AspectJAwareAdvisorAutoProxyCreator"></bean>
+
+    <!--    增强器-->
+    <bean id="aspectjAspect" class="cn.haitaoss.tinyioc.aop.AspectJExpressionPointcutAdvisor">
+        <property name="advice" ref="timeInterceptor"></property>
+        <property name="expression" value="execution(* cn.haitaoss.tinyioc.*.*.say(..))"></property>
+    </bean>
+    <bean id="parent" class="cn.haitaoss.tinyioc.loop2.ParentImpl">
+        <property name="son" ref="son"></property>
+    </bean>
+    <bean id="son" class="cn.haitaoss.tinyioc.loop2.SonImpl">
+        <property name="parent" ref="parent"></property>
+    </bean>
+</beans>

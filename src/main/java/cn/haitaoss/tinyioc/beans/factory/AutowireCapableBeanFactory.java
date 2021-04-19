@@ -23,7 +23,7 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
      * @param instance
      * @param beanDefinition
      */
-    protected void applyPropertyValues(Object instance, BeanDefinition beanDefinition) throws Exception {
+    protected void applyPropertyValues(String name,Object instance, BeanDefinition beanDefinition) throws Exception {
         // 这一步是为了实现 aop
         if (instance instanceof BeanFactoryAware) {
             ((BeanFactoryAware) instance).setBeanFactory(this);
@@ -32,8 +32,19 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
         for (PropertyValue propertyValue : beanDefinition.getPropertyValues().getPropertyValueList()) {
             Object value = propertyValue.getValue();
             if (value instanceof BeanReference) {
+                // ref 类型的就创建BeanReference
                 BeanReference beanReference = (BeanReference) value;
-                value = getBean(beanReference.getName());
+                String refName = beanReference.getName();
+                value = getBean(refName);
+
+                // 说明当前是循环依赖状态
+                if (thirdCache.containsKey(refName) && !firstCache.containsKey(refName)) {
+                    // 标注a ref b,b ref a中，b是后被循环引用的
+                    // 比如 a ref b, b ref a 此时secondCache里面放入的是a，也就是b里面对a的引用是不对的需要修改
+                    // beanReference.getName()是 a，instance 是 b，
+                    // secondCache.put(refName, instance);
+                    secondCache.put(name, null); // key是这个bean对应的属性不完整
+                }
             }
             try {
                 Method declaredMethod = instance.getClass().getDeclaredMethod(

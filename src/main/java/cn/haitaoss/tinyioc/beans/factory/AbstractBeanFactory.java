@@ -4,6 +4,7 @@ import cn.haitaoss.tinyioc.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.BeanPostProcessor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +18,27 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractBeanFactory implements BeanFactory {
     private final List<String> beanDefinitionNames = new ArrayList<>();  // 记录所有bean的名字，用于提前创建bean还有就是收集beanpostProcessor
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(); // 容器
+    // 三级缓存 解决循环引用缺少代理的问题
+    protected Map<String, Object> secondCache = new HashMap<>();
+    protected Map<String, Object> thirdCache = new HashMap<>();
+    protected Map<String, Object> firstCache = new HashMap<>();
     private List<BeanPostProcessor> beanPostProcessors = new ArrayList<>(); // 记录容器中所有的beanPostProcessor
+
+    public Map<String, BeanDefinition> getBeanDefinitionMap() {
+        return beanDefinitionMap;
+    }
+
+    public Map<String, Object> getSecondCache() {
+        return secondCache;
+    }
+
+    public Map<String, Object> getThirdCache() {
+        return thirdCache;
+    }
+
+    public Map<String, Object> getFirstCache() {
+        return firstCache;
+    }
 
     /**
      * 创建单例bean
@@ -35,10 +56,14 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         }
         Object bean = beanDefinition.getBean(); // null
         if (bean == null) {
-            bean = doCreateBean(beanDefinition);
+            bean = doCreateBean(name, beanDefinition);
             bean = initializeBean(bean, name); // 代理操作
             // 将操作过的bean重新设置到beanDefinition中
             beanDefinition.setBean(bean); // 修改beandefinition 里面的bean
+
+            if (thirdCache.containsKey(name)) {// 空构造实例如果被AOP成代理实例，则放入三级缓存，说明已经构建完毕
+                firstCache.put(name, bean);
+            }
         }
         return bean;
     }
@@ -72,16 +97,16 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         }
     }
 
-    protected Object doCreateBean(BeanDefinition beanDefinition) throws Exception {
+    protected Object doCreateBean(String name, BeanDefinition beanDefinition) throws Exception {
         Object bean = createBeanInstance(beanDefinition);
+        // thirdCache中放置的全是空构造方法构造出的实例
+        thirdCache.put(name, bean);
         beanDefinition.setBean(bean);
-        // a ref b
-        // a ref b , b ref c ,c ref a
-        applyPropertyValues(bean, beanDefinition);
+        applyPropertyValues(name,bean, beanDefinition);
         return bean;
     }
 
-    protected void applyPropertyValues(Object bean, BeanDefinition beanDefinition) throws Exception {
+    protected void applyPropertyValues(String name,Object bean, BeanDefinition beanDefinition) throws Exception {
 
     }
 

@@ -147,7 +147,7 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 ## 从容器中获取代理对象调用方法
 
 - 从容器中获取bean，调用方法的过程（这里就举例：代理对象的情况）。`((HelloWorldService) context.getBean("helloWorldService")).sayHello();`
-    
+  
     - helloWorldService 是通过jdk动态代理产生的代理对象，那么执行方法的时候肯定会执行invocationHandle的invoke方法。下面是invoke方法的实现
     - 因为我们的被代理对象是进行封装过的，具体的增强方法已经封装到被代理对象中了。
         - 从被代理对象advised 中获取增强方法
@@ -175,6 +175,39 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 
 # step-10-invite-cglib-and-aopproxy-factory
 
+# 使用三级缓存解决循环引用缺少代理对象的问题
+> 基础知识
+firstCache：存储的是完整初始化过后的对象
+secondCache：存储的是属性值有问题的对象（待容器初始化完全后，会拿出这里的对象重新赋值）
+thirdCache：存储的是无参构造器初始化的对象
+
+> 流程
+1. 利用无参构造器初始化对象之后将这个对象存入thirdCache
+2. 给对象属性赋值时，如果当前属性是引用属性，需要判断这个属性值在三级缓存中是否存在，不存在就将该对象存入secondCache，表示这个对象的属性值并不完整后续需要修改
+3. 对象完成完整的初始化流程之后，要把这个对象存入firstCache
+4. 所有的对象已经操作完了。遍历secondCache，如果有值说明这个对象里面的属性需要重新赋值。找到这个对象里面属性值类型为ref的属性。从firstCache 取出来赋值进去。
+
+> 缺点
+通过反射赋值的时候有问题，因为类型匹配不对。解决办法对象的属性类型写实现类别写接口
+```java
+ Method declaredMethod = realClassInvokeBean.getClass().getDeclaredMethod("set" + propertyValue.getName().substring(0, 1).toUpperCase()
+                            + propertyValue.getName().substring(1), realClassRefBean.getClass());
+ // Method declaredMethod = realClassInvokeBean.getClass().getDeclaredMethod("set" + propertyValue.getName().substring(0, 1).toUpperCase() + propertyValue.getName().substring(1), realClassRefBean.getClass().getInterfaces()[0]);
+```
+```java
+public class GrandSonImp implements GrandSon{
+    private Parent parent;
+
+    public void setParent(ParentImpl parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public void say() {
+        System.out.println("parent 是不是代理对象 "+ (parent instanceof Proxy || parent instanceof Factory));
+    }
+}
+```
 # 项目中用到的依赖是什么
 ## aopalliance
 ```xml
@@ -198,3 +231,91 @@ AOP Alliance 是AOP的接口标准，定义了 AOP 中的基础概念(Advice、C
 
 ## cglib
 比jdk代理强，能代理类 
+
+# cglib代理和jdk代理
+原文：https://blog.csdn.net/w8253497062015/article/details/90274387#%E7%90%86%E8%A7%A3%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F
+- CGlib的原理是通过对字节码的操作，可以动态的生成一个目标实例类的子类，这个子类和目标实例的子类相同的基础上，还增加了代理代码或者叫advice。代理类 = 被代理类+增强逻辑
+
+    - CGlib动态代理
+
+      ```java
+      class Student{
+          private String name = "zhang san";
+      
+          public String getName() {
+              System.out.println(name);
+              return name;
+          }
+      
+          public void setName(String name) {
+              this.name = name;
+          }
+      }
+      public class CglibMthodTwo implements MethodInterceptor {
+          public Object getProxy(Class clazz){
+              Enhancer en = new Enhancer();
+              en.setSuperclass(clazz);
+              en.setCallback(this);
+              Object proxy = en.create();
+              return proxy;
+          }
+          @Override
+          public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+              System.out.println("前");
+              Object res =  methodProxy.invokeSuper(o,objects);
+              System.out.println("后");
+              return res;
+          }
+      
+          public static void main(String[] args) {
+              CglibMthodTwo cglibMthodTwo = new CglibMthodTwo();
+              ((Student)cglibMthodTwo.getProxy(Student.class)).getName();
+      
+          }
+      
+      }
+      
+      
+      ```
+
+    - jdk动态代理
+
+      ```java
+      public class JdkDynamicAopProxy extends AbstractAopProxy implements InvocationHandler {
+      
+          public JdkDynamicAopProxy(AdvisedSupport advised) {
+              super(advised);
+          }
+      
+          @Override
+          public Object getProxy() {
+              return Proxy.newProxyInstance(getClass().getClassLoader(), advised.getTargetSource().getInterfaces(), this);
+          }
+      
+          @Override
+          public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+              MethodInterceptor methodInterceptor = advised.getMethodInterceptor();
+              Object res = null;
+              if (advised.getMethodMatcher() != null
+                      && advised.getMethodMatcher().matches(method, advised.getTargetSource().getTarget().getClass())) {
+                  res = methodInterceptor.invoke(new ReflectiveMethodInvocation(advised.getTargetSource().getTarget(),
+                          method, args));
+              } else {
+                  res = method.invoke(advised.getTargetSource().getTarget(), args);
+      
+              }
+              return res;
+          }
+      
+      }
+      
+      ```
+
+      
+
+- 与JDK动态代理的区别
+
+    - 原理上JDK没有修改字节码，而是采用$proxyn extend Proxy implements InterfaceXXX的方式创建了一个被代理接口的实现类，然后在**运行期写class文件，再用classloader加载**。而CGlib却是操作字节码，将被代理类的字节码增强成一个子类，因此要导入ASM包。
+    - 操作上，JDK动态代理创建为Proxy类实例，且必须要传入InvocationHandler类，而Cglib创建为Enhancer类实例，且必须传入MethodInterceptor类（注意包的问题，这个MethodInterceptor是CGlib中的）。
+    - Advice即代理代码的实现上，JDK动态代理可以在InvocationHandler中重写invoke实现，或者在InvocationHandler.invoke中调用methodInterceptor.invoke（methodInvocation），将代理的业务代码交给methodInterceptor去做，被代理实例方法的运行通过参数methodInvocation.proceed()实现。而在CGlib中，通过methodInterceptor.intercept()实现代理增强，值得注意的是，这个方法内部有四个参数，包括一个被代理实例，而JDK的InvocationHandler.invoke却不包含被代理实例。
+    
