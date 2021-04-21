@@ -20,7 +20,7 @@ public class SonImpl implements Son {
 
     @Override
     public void say() {
-        System.out.println("parent 是不是代理对象 "+  (parent instanceof Proxy || parent instanceof Factory));
+        System.out.println("parent 是不是代理对象 " + (parent instanceof Proxy || parent instanceof Factory));
         parent.say();
     }
 }

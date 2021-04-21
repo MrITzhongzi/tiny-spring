@@ -1,55 +1,7 @@
 # 来源
 原作者：https://github.com/code4craft/tiny-spring
 参考的博客：https://blog.csdn.net/w8253497062015/article/details/90274387#%E7%90%86%E8%A7%A3%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F
-# step-1-container-register-and-get
 
-1. 定义BeanDefinition
-    - 统一所有对象的信息
-2. 定义BeanFactory
-    - 存储所有bean的容器
-
-# step-2-abstract-beanfactory-and-do-bean-initilizing-in-it
-
-1. 修改BeanDefinition
-2. 接口化BeanFactory
-
-# step-3-inject-bean-with-property
-
-1. 修改BeanDefinition
-
-- 增加PropertyValues属性，里面存放bean 的初始化属性的值
-
-2. 修改AutowireCapableBeanFactory
-
-- 增加读取beanDefinition 中propertyValues中的属性值，赋值给对应的bean
-
-# step-4-config-beanfactory-with-xml
-
-读取xml 文件来初始化bean
-
-# step-5-inject-bean-to-bean
-
-为bean注入bean。通过BeanReference 表示这个属性是一个bean对象，他的值应该从IOC容器中获取
-
-# step-6-invite-application-context
-
-# step-7-method-interceptor-by-jdk-dynamic-proxy
-- AdvisedSupport 里面有TargetSource 和 MethodInterceptor
-  - TargetSource：里面包含被代理对象 和 被代理对象的接口
-  - MethodInterceptor：当前被代理对象需要增加的功能
-- 因为每个被代理对象需要增加的功能可能不一样，所以我们把被代理对象需要增加的功能放到advise 中
-```java
-public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        MethodInterceptor methodInterceptor = advise.getMethodInterceptor();
-        return methodInterceptor.invoke(new ReflectiveMethodInvocation(advise.getTargetSource().getTarget(), method, args));
-    }
-```
-
-# step-8-invite-pointcut-and-aspectj
-加入切入点和 beanPostProcessor
-
-# step-9-auto-create-aop-proxy
-通过BeanPostProcessor来实现aop 和 spring的整合。
 
 # 容器初始化流程
 ## 核心对象
@@ -176,7 +128,6 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
     }
     ```
 
-# step-10-invite-cglib-and-aopproxy-factory
 
 # 使用三级缓存解决循环引用缺少代理对象的问题
 > 基础知识

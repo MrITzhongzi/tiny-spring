@@ -3,6 +3,7 @@ package cn.haitaoss.tinyioc.beans.factory;
 import cn.haitaoss.tinyioc.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.BeanPostProcessor;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,10 +61,6 @@ public abstract class AbstractBeanFactory implements BeanFactory {
             bean = initializeBean(bean, name); // 代理操作
             // 将操作过的bean重新设置到beanDefinition中
             beanDefinition.setBean(bean); // 修改beandefinition 里面的bean
-
-            if (thirdCache.containsKey(name)) {// 空构造实例如果被AOP成代理实例，则放入三级缓存，说明已经构建完毕
-                firstCache.put(name, bean);
-            }
         }
         return bean;
     }
@@ -73,12 +70,24 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         for (BeanPostProcessor beanPostProcessor : beanPostProcessors) { // beanPostProcessors.size() = 0
             bean = beanPostProcessor.postProcessBeforeInitialization(bean, name);
         }
-        // 省略 bean 的初始化操作
+        // bean 的初始化操作
+        try{
+            Method method =  bean.getClass().getMethod("init",null);
+            method.invoke(bean,null);
+        }catch (Exception e){
+
+        }
 
         // 初始化后的操作
         for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
             bean = beanPostProcessor.postProcessAfterInitialization(bean, name);
         }
+
+        // 初始化完成放入三级缓存
+        if (thirdCache.containsKey(name)) {
+            firstCache.put(name, bean);
+        }
+
         return bean;
     }
 
@@ -102,11 +111,11 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         // thirdCache中放置的全是空构造方法构造出的实例
         thirdCache.put(name, bean);
         beanDefinition.setBean(bean);
-        applyPropertyValues(name,bean, beanDefinition);
+        applyPropertyValues(name, bean, beanDefinition);
         return bean;
     }
 
-    protected void applyPropertyValues(String name,Object bean, BeanDefinition beanDefinition) throws Exception {
+    protected void applyPropertyValues(String name, Object bean, BeanDefinition beanDefinition) throws Exception {
 
     }
 

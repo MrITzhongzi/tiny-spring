@@ -41,6 +41,12 @@
             <artifactId>cglib-nodep</artifactId>
             <version>2.1_3</version>
         </dependency>
+        <!-- 解决cglib代理后，不能通过filed.set修改被代理对象的属性值 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>5.3.1</version>
+        </dependency>
     </dependencies>
 
     <build>

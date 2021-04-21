@@ -13,6 +13,11 @@ public class ProxyFactory extends AdvisedSupport implements AopProxy {
     }
 
     protected final AopProxy createAopProxy() {
-        return new Cglib2AopProxy(this);
+        // return new Cglib2AopProxy(this);
+        // 如果不是接口的实现类 就使用cglib实现代理
+        if (getTargetSource().getInterfaces() == null || getTargetSource().getInterfaces().length == 0) {
+            return new Cglib2AopProxy(this);
+        }
+        return new JdkDynamicAopProxy(this);
     }
 }

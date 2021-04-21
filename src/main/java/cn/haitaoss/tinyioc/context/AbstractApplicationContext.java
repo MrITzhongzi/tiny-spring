@@ -76,10 +76,15 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 
                 Object realClassInvokeBean = thirdCache.get(invokeBeanName);
                 Object realClassRefBean = thirdCache.get(refName);
+                // JdkDynamicObject extend Proxy implement xx
                 try {
-                    Method declaredMethod = realClassInvokeBean.getClass().getDeclaredMethod("set" + propertyValue.getName().substring(0, 1).toUpperCase()
-                            + propertyValue.getName().substring(1), realClassRefBean.getClass());
-                    // Method declaredMethod = realClassInvokeBean.getClass().getDeclaredMethod("set" + propertyValue.getName().substring(0, 1).toUpperCase() + propertyValue.getName().substring(1), realClassRefBean.getClass().getInterfaces()[0]);
+                    Method declaredMethod = realClassInvokeBean.getClass().getDeclaredMethod(
+                            "set" +
+                                    propertyValue.getName().substring(0, 1).toUpperCase() +
+                                    propertyValue.getName().substring(1),
+                            realClassRefBean.getClass()
+                    );
+
                     declaredMethod.setAccessible(true);
                     declaredMethod.invoke((realClassInvokeBean.getClass().cast(invokeBean)), (realClassRefBean.getClass().cast(exceptedValue)));
                 } catch (NoSuchMethodException e) {
