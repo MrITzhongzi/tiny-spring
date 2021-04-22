@@ -5,6 +5,7 @@ import cn.haitaoss.tinyioc.beans.BeanPostProcessor;
 import cn.haitaoss.tinyioc.beans.BeanReference;
 import cn.haitaoss.tinyioc.beans.ConstructorArgument;
 import cn.haitaoss.tinyioc.beans.converter.ConverterFactory;
+import cn.haitaoss.tinyioc.beans.lifecycle.InitializingBean;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -82,7 +83,7 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         }
         // bean 的初始化操作
         try {
-            Method method = bean.getClass().getMethod("init", null);
+            Method method = bean.getClass().getMethod("init_method", null);
             method.invoke(bean, null);
         } catch (Exception e) {
 
@@ -148,6 +149,10 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         thirdCache.put(name, bean);
         beanDefinition.setBean(bean);
         applyPropertyValues(name, bean, beanDefinition);
+        // 生命周期
+        if(bean instanceof InitializingBean){
+            ((InitializingBean) bean).afterPropertiesSet();
+        }
         return bean;
     }
 

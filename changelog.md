@@ -92,3 +92,24 @@ if (field.getType().toString().equals("class java.lang.String"))
 else
     convertedValue = this.converterFactory.getConverterMap().get(field.getType()).parse((String) value);
 ```
+
+# 完善bean的声明周期
+```java
+if (bean == null) {
+    bean = doCreateBean(name, beanDefinition);
+    bean = initializeBean(bean, name); // 代理操作
+    // 将操作过的bean重新设置到beanDefinition中
+    beanDefinition.setBean(bean); // 修改beandefinition 里面的bean
+}
+```
+- doCreateBean：给bean的属性赋值之后会调用bean的afterPropertiesSet 初始化bean
+  ```java
+applyPropertyValues(name, bean, beanDefinition);
+// 生命周期
+if(bean instanceof InitializingBean){
+    ((InitializingBean) bean).afterPropertiesSet();
+}
+    ```
+
+- initializeBean：调用BeanPostProcessor 的before方法后会获取bean的 init_method 初始化
+- applicationContext.close()：调用bean的销毁方法

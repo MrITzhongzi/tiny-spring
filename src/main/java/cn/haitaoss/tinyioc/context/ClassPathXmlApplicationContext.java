@@ -4,8 +4,10 @@ import cn.haitaoss.tinyioc.beans.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.factory.AbstractBeanFactory;
 import cn.haitaoss.tinyioc.beans.factory.AutowireCapableBeanFactory;
 import cn.haitaoss.tinyioc.beans.io.ResourceLoader;
+import cn.haitaoss.tinyioc.beans.lifecycle.DisposableBean;
 import cn.haitaoss.tinyioc.beans.xml.XmlBeanDefinitionReader;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
@@ -34,6 +36,21 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
         for (Map.Entry<String, BeanDefinition> entry : xmlBeanDefinitionReader.getRegistry().entrySet()) {
             beanFactory.registerBeanDefinition(entry.getKey(), entry.getValue());
+        }
+    }
+
+    public void close() {
+        for (Map.Entry<String, BeanDefinition> entry : beanFactory.getBeanDefinitionMap().entrySet()) {
+            Object realClassInvokeBean = entry.getValue().getBean();
+            if (realClassInvokeBean instanceof DisposableBean) {
+                ((DisposableBean) realClassInvokeBean).destroy();
+            }
+            try {
+                Method method = realClassInvokeBean.getClass().getMethod("destroy_method", null);
+                method.invoke(realClassInvokeBean, null);
+            } catch (Exception e) {
+
+            }
         }
     }
 }
