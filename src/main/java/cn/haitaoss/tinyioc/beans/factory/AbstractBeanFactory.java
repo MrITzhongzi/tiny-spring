@@ -3,7 +3,8 @@ package cn.haitaoss.tinyioc.beans.factory;
 import cn.haitaoss.tinyioc.beans.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.BeanPostProcessor;
 import cn.haitaoss.tinyioc.beans.BeanReference;
-import cn.haitaoss.tinyioc.beans.constructor.ConstructorArgument;
+import cn.haitaoss.tinyioc.beans.ConstructorArgument;
+import cn.haitaoss.tinyioc.beans.converter.ConverterFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -22,11 +23,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractBeanFactory implements BeanFactory {
     private final List<String> beanDefinitionNames = new ArrayList<>();  // 记录所有bean的名字，用于提前创建bean还有就是收集beanpostProcessor
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(); // 容器
+    private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>(); // 记录容器中所有的beanPostProcessor
     // 三级缓存 解决循环引用缺少代理的问题
     protected Map<String, Object> secondCache = new HashMap<>();
     protected Map<String, Object> thirdCache = new HashMap<>();
     protected Map<String, Object> firstCache = new HashMap<>();
-    private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>(); // 记录容器中所有的beanPostProcessor
+    // 解析基本数据类型
+    protected ConverterFactory converterFactory = new ConverterFactory();
+
+    public ConverterFactory getConverterFactory() {
+        return converterFactory;
+    }
 
     public Map<String, BeanDefinition> getBeanDefinitionMap() {
         return beanDefinitionMap;

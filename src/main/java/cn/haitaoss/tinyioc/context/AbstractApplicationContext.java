@@ -3,10 +3,12 @@ package cn.haitaoss.tinyioc.context;
 import cn.haitaoss.tinyioc.beans.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.BeanPostProcessor;
 import cn.haitaoss.tinyioc.beans.PropertyValue;
+import cn.haitaoss.tinyioc.beans.converter.Converter;
 import cn.haitaoss.tinyioc.beans.factory.AbstractBeanFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -26,10 +28,20 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     public void refresh() throws Exception {
         // 将读取xml 获取的容器复制到 beanFactory中
         loadBeanDefinitions(beanFactory);
+        // 注册类型转换器
+        registerConverter(beanFactory);
         // 注册beanPostProcessor
         registerBeanPostProcessors(beanFactory);
         // 创建出ioc容器中所有的对象
         onRefresh();
+    }
+
+    protected void registerConverter(AbstractBeanFactory beanFactory) throws Exception {
+        List beanConverters = beanFactory.getBeansForType(Converter.class);
+        for (Object converter : beanConverters) {
+            Type type = ((Converter) converter).getType();
+            beanFactory.getConverterFactory().getConverterMap().put(type, (Converter) converter);
+        }
     }
 
     protected void registerBeanPostProcessors(AbstractBeanFactory beanFactory) throws Exception {

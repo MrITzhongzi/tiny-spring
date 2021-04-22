@@ -31,12 +31,13 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
 
         for (PropertyValue propertyValue : beanDefinition.getPropertyValues().getPropertyValueList()) {
             Object value = propertyValue.getValue();
+            Object convertedValue = null;
             if (value instanceof BeanReference) {
                 // ref 类型的就创建BeanReference
                 BeanReference beanReference = (BeanReference) value;
                 String refName = beanReference.getName();
                 value = getBean(refName);
-
+                convertedValue = value;
                 // 说明当前是循环依赖状态
                 if (thirdCache.containsKey(refName) && !firstCache.containsKey(refName)) {
                     // 标注a ref b,b ref a中，b是后被循环引用的
@@ -46,18 +47,26 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
                     secondCache.put(name, null); // key是这个bean对应的属性不完整
                 }
             }
+            // 非ref字段，对value进行处理，将string转化成对应类型
+            else {
+                Field field = instance.getClass().getDeclaredField(propertyValue.getName());// 获得name对应的字段
+                if (field.getType().toString().equals("class java.lang.String"))
+                    convertedValue = value;
+                else
+                    convertedValue = this.converterFactory.getConverterMap().get(field.getType()).parse((String) value);
+            }
             try {
                 Method declaredMethod = instance.getClass().getDeclaredMethod(
                         "set" + propertyValue.getName().substring(0, 1).toUpperCase()
                                 + propertyValue.getName().substring(1), value.getClass());
                 declaredMethod.setAccessible(true);
 
-                declaredMethod.invoke(instance, value);
+                declaredMethod.invoke(instance, convertedValue);
             } catch (NoSuchMethodException e) {
                 // 没有提供set方法也设置
                 Field declaredField = instance.getClass().getDeclaredField(propertyValue.getName());
                 declaredField.setAccessible(true);
-                declaredField.set(instance, value);
+                declaredField.set(instance, convertedValue);
             }
         }
     }

@@ -38,5 +38,17 @@
         <constructor-arg ref="address2"/>
     </bean>
 
+    <!-- 测试类型装换 -->
+    <bean id="carByConvert" class="cn.haitaoss.tinyioc.Car">
+        <property name="name" value="notOnlySpring"></property>
+        <property name="price" value="1000"></property>
+    </bean>
+
+
+    <bean id="anything" class="cn.haitaoss.tinyioc.Anything">
+        <property name="point" value="22;99"></property>
+    </bean>
+
+    <bean id="pointConverter" class="cn.haitaoss.tinyioc.beans.converter.PointConverter"></bean>
 
 </beans>

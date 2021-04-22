@@ -1,7 +1,5 @@
 package cn.haitaoss.tinyioc.beans;
 
-import cn.haitaoss.tinyioc.beans.constructor.ConstructorArgument;
-
 /**
  * @author haitao.chen
  * @email haitaoss@aliyun.com

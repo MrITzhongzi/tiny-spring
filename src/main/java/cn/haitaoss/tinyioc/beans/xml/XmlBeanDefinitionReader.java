@@ -4,7 +4,7 @@ import cn.haitaoss.tinyioc.beans.AbstractBeanDefinitionReader;
 import cn.haitaoss.tinyioc.beans.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.BeanReference;
 import cn.haitaoss.tinyioc.beans.PropertyValue;
-import cn.haitaoss.tinyioc.beans.constructor.ConstructorArgument;
+import cn.haitaoss.tinyioc.beans.ConstructorArgument;
 import cn.haitaoss.tinyioc.beans.io.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

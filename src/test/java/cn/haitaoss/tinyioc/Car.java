@@ -9,6 +9,7 @@ package cn.haitaoss.tinyioc;
 public class Car implements Driveable {
     private String name;
     private Liveable address;
+    private int price;
 
     public Car() {
     }
@@ -16,6 +17,14 @@ public class Car implements Driveable {
     public Car(String name, Liveable address) {
         this.name = name;
         this.address = address;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     @Override

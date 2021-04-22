@@ -1,4 +1,4 @@
-package cn.haitaoss.tinyioc.beans.constructor;
+package cn.haitaoss.tinyioc.beans;
 
 import cn.haitaoss.tinyioc.Driveable;
 import cn.haitaoss.tinyioc.context.ApplicationContext;

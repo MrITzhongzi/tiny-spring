@@ -59,3 +59,36 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
     - 使用jdk进行代理，无法通过反射设置值。method.invoke() filed.set() 都出错。
 
 # 实现构造器的解析
+
+# 增加类型解析器，解析复杂类型的属性
+- 我们自定义的类型的属性的赋值。我们可能有一些定制化需求。所以我们可以通过向容器中加入Converter来实现。Converter接口的parse方法的返回值，就是最终注入个属性的值
+- 容器刷新时，注册converter到ConverterFactory中
+```java
+public void refresh() throws Exception {
+        // 将读取xml 获取的容器复制到 beanFactory中
+        loadBeanDefinitions(beanFactory);
+        // 注册类型转换器
+        registerConverter(beanFactory);
+        // 注册beanPostProcessor
+        registerBeanPostProcessors(beanFactory);
+        // 创建出ioc容器中所有的对象
+        onRefresh();
+    }
+
+    protected void registerConverter(AbstractBeanFactory beanFactory) throws Exception {
+        List beanConverters = beanFactory.getBeansForType(Converter.class);
+        for (Object converter : beanConverters) {
+            Type type = ((Converter) converter).getType();
+            beanFactory.getConverterFactory().getConverterMap().put(type, (Converter) converter);
+        }
+    }
+```
+- 创建bean，属性解析时。如果不是BeanDefinition 类型而且不是string类型的属性。我们应该通过conver进行解析
+```java
+// 非ref字段，对value进行处理，将string转化成对应类型
+Field field = instance.getClass().getDeclaredField(propertyValue.getName());// 获得name对应的字段
+if (field.getType().toString().equals("class java.lang.String"))
+    convertedValue = value;
+else
+    convertedValue = this.converterFactory.getConverterMap().get(field.getType()).parse((String) value);
+```

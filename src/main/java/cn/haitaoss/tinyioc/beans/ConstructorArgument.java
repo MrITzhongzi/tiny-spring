@@ -1,4 +1,4 @@
-package cn.haitaoss.tinyioc.beans.constructor;
+package cn.haitaoss.tinyioc.beans;
 
 import java.util.Collections;
 import java.util.LinkedList;
