@@ -1,6 +1,4 @@
-package cn.haitaoss.tinyioc;
-
-import cn.haitaoss.tinyioc.beans.BeanPostProcessor;
+package cn.haitaoss.tinyioc.beans;
 
 /**
  * @author haitao.chen

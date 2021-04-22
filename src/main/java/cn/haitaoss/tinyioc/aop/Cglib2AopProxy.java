@@ -30,9 +30,9 @@ public class Cglib2AopProxy extends AbstractAopProxy {
 
     private static class DynamicAdvisedInterceptor implements MethodInterceptor {
 
-        private AdvisedSupport advised;
+        private final AdvisedSupport advised;
 
-        private org.aopalliance.intercept.MethodInterceptor delegateMethodInterceptor;
+        private final org.aopalliance.intercept.MethodInterceptor delegateMethodInterceptor;
 
         private DynamicAdvisedInterceptor(AdvisedSupport advised) {
             this.advised = advised;
@@ -49,6 +49,7 @@ public class Cglib2AopProxy extends AbstractAopProxy {
             // return method.invoke(advised.getTargetSource().getTarget(),args); // 这样子写省事
         }
     }
+
     private static class CglibMethodInvocation extends ReflectiveMethodInvocation {
 
         private final MethodProxy methodProxy;

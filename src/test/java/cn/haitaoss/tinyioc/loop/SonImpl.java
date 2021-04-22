@@ -13,8 +13,9 @@ import java.lang.reflect.Proxy;
  */
 public class SonImpl implements Son {
     private GrandSon grandSon;
+
     @Override
     public void say() {
-        System.out.println("grandSon 是不是代理对象 "+ (grandSon instanceof Proxy || grandSon instanceof Factory));
+        System.out.println("grandSon 是不是代理对象 " + (grandSon instanceof Proxy || grandSon instanceof Factory));
     }
 }

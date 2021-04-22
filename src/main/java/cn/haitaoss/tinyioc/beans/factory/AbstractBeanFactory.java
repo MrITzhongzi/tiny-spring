@@ -1,8 +1,11 @@
 package cn.haitaoss.tinyioc.beans.factory;
 
-import cn.haitaoss.tinyioc.BeanDefinition;
+import cn.haitaoss.tinyioc.beans.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.BeanPostProcessor;
+import cn.haitaoss.tinyioc.beans.BeanReference;
+import cn.haitaoss.tinyioc.beans.constructor.ConstructorArgument;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +26,7 @@ public abstract class AbstractBeanFactory implements BeanFactory {
     protected Map<String, Object> secondCache = new HashMap<>();
     protected Map<String, Object> thirdCache = new HashMap<>();
     protected Map<String, Object> firstCache = new HashMap<>();
-    private List<BeanPostProcessor> beanPostProcessors = new ArrayList<>(); // 记录容器中所有的beanPostProcessor
+    private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>(); // 记录容器中所有的beanPostProcessor
 
     public Map<String, BeanDefinition> getBeanDefinitionMap() {
         return beanDefinitionMap;
@@ -71,10 +74,10 @@ public abstract class AbstractBeanFactory implements BeanFactory {
             bean = beanPostProcessor.postProcessBeforeInitialization(bean, name);
         }
         // bean 的初始化操作
-        try{
-            Method method =  bean.getClass().getMethod("init",null);
-            method.invoke(bean,null);
-        }catch (Exception e){
+        try {
+            Method method = bean.getClass().getMethod("init", null);
+            method.invoke(bean, null);
+        } catch (Exception e) {
 
         }
 
@@ -91,8 +94,34 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         return bean;
     }
 
-    protected Object createBeanInstance(BeanDefinition beanDefinition) throws Exception {
-        return beanDefinition.getBeanClass().newInstance();
+    private Object createBeanInstance(BeanDefinition beanDefinition) throws Exception {
+        if (beanDefinition.getConstructorArgument().isEmpty()) {
+            return beanDefinition.getBeanClass().newInstance();
+        } else {
+            List<ConstructorArgument.ValueHolder> valueHolders = beanDefinition.getConstructorArgument().getArgumentValues();
+            Class clazz = Class.forName(beanDefinition.getBeanClassName());
+            Constructor[] cons = clazz.getConstructors();
+            for (Constructor constructor : cons) {
+                // 这里省去判断参数类型
+                if (constructor.getParameterCount() == valueHolders.size()) {
+                    Object[] params = new Object[valueHolders.size()];
+                    for (int i = 0; i < params.length; i++) {
+                        params[i] = valueHolders.get(i).getValue();
+                        if (params[i] instanceof BeanReference) {
+                            BeanReference ref = (BeanReference) params[i];
+                            String refName = ref.getName();
+                            if (thirdCache.containsKey(refName) && !firstCache.containsKey(refName)) {
+                                throw new IllegalAccessException("构造函数循环依赖" + refName);
+                            } else {
+                                params[i] = getBean(refName);
+                            }
+                        }
+                    }
+                    return constructor.newInstance(params);
+                }
+            }
+        }
+        return null;
     }
 
     public void registerBeanDefinition(String name, BeanDefinition beanDefinition) throws Exception {

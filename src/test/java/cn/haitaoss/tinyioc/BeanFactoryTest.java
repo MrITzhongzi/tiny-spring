@@ -1,5 +1,6 @@
 package cn.haitaoss.tinyioc;
 
+import cn.haitaoss.tinyioc.beans.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.factory.AbstractBeanFactory;
 import cn.haitaoss.tinyioc.beans.factory.AutowireCapableBeanFactory;
 import cn.haitaoss.tinyioc.beans.io.ResourceLoader;

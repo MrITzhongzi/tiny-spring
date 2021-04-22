@@ -57,3 +57,5 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 问题：
     - 使用cglib进行代理，只能通过set方法注入属性。field.set() 设置的是代理对象的属性不是被代理对象的
     - 使用jdk进行代理，无法通过反射设置值。method.invoke() filed.set() 都出错。
+
+# 实现构造器的解析

@@ -8,5 +8,6 @@ package cn.haitaoss.tinyioc.aop;
  */
 public interface Pointcut {
     ClassFilter getClassFilter();
+
     MethodMatcher getMethodMatcher();
 }

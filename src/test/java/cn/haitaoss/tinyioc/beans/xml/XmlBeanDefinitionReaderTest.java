@@ -1,6 +1,6 @@
 package cn.haitaoss.tinyioc.beans.xml;
 
-import cn.haitaoss.tinyioc.BeanDefinition;
+import cn.haitaoss.tinyioc.beans.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.io.ResourceLoader;
 import org.junit.Assert;
 import org.junit.Test;

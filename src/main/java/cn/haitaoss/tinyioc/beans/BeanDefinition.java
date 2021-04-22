@@ -1,6 +1,6 @@
-package cn.haitaoss.tinyioc;
+package cn.haitaoss.tinyioc.beans;
 
-import cn.haitaoss.tinyioc.beans.PropertyValues;
+import cn.haitaoss.tinyioc.beans.constructor.ConstructorArgument;
 
 /**
  * @author haitao.chen
@@ -13,8 +13,17 @@ public class BeanDefinition {
     private Class beanClass;
     private String beanClassName;
     private PropertyValues propertyValues = new PropertyValues();
+    private ConstructorArgument constructorArgument = new ConstructorArgument();
 
     public BeanDefinition() {
+    }
+
+    public ConstructorArgument getConstructorArgument() {
+        return constructorArgument;
+    }
+
+    public void setConstructorArgument(ConstructorArgument constructorArgument) {
+        this.constructorArgument = constructorArgument;
     }
 
     public Object getBean() {

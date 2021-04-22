@@ -19,6 +19,6 @@ public class ParentImpl implements Parent {
 
     @Override
     public void say() {
-        System.out.println("son 是不是代理对象 "+ (son instanceof Proxy || son instanceof Factory));
+        System.out.println("son 是不是代理对象 " + (son instanceof Proxy || son instanceof Factory));
     }
 }

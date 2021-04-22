@@ -31,7 +31,7 @@ public class AspectJExpressionPointcut implements Pointcut, ClassFilter, MethodM
         DEFAULT_SUPPORTED_PRIMITIVES.add(PointcutPrimitive.AT_TARGET);
     }
 
-    private PointcutParser pointcutParser;
+    private final PointcutParser pointcutParser;
     private String expression;
     private PointcutExpression pointcutExpression;
 

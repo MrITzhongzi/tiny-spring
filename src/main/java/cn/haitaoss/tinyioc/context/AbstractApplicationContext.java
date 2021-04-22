@@ -1,6 +1,6 @@
 package cn.haitaoss.tinyioc.context;
 
-import cn.haitaoss.tinyioc.BeanDefinition;
+import cn.haitaoss.tinyioc.beans.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.BeanPostProcessor;
 import cn.haitaoss.tinyioc.beans.PropertyValue;
 import cn.haitaoss.tinyioc.beans.factory.AbstractBeanFactory;
@@ -95,7 +95,6 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
             }
         }
     }
-
 
     protected abstract void loadBeanDefinitions(AbstractBeanFactory beanFactory) throws Exception;
 

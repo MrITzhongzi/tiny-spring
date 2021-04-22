@@ -8,8 +8,8 @@ package cn.haitaoss.tinyioc.aop;
  */
 public class TargetSource {
     private final Object target;
-    private Class<?> targetClass;
-    private Class<?>[] interfaces;
+    private final Class<?> targetClass;
+    private final Class<?>[] interfaces;
 
     public TargetSource(Object target, Class targetClass, Class<?>... interfaces) {
         this.targetClass = targetClass;

@@ -8,5 +8,6 @@ package cn.haitaoss.tinyioc;
  */
 public interface HelloWorldService {
     void helloWorld();
+
     void sayHello();
 }

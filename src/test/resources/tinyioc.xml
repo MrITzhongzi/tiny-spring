@@ -3,28 +3,40 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <!--    增强方法-->
-    <bean id="timeInterceptor" class="cn.haitaoss.tinyioc.aop.TimerInterceptor"></bean>
 
     <!--    为了整合aop 倒容器中的 BeanPostProcessor-->
     <bean id="autoProxyCreator" class="cn.haitaoss.tinyioc.aop.AspectJAwareAdvisorAutoProxyCreator"></bean>
 
+    <!--    <bean id="beanInitializeLogger" class="cn.haitaoss.tinyioc.beans.BeanInitializeLogger"></bean>-->
 
-<!--    <bean id="beanInitializeLogger" class="cn.haitaoss.tinyioc.BeanInitializeLogger"></bean>-->
-
+    <!--    增强方法-->
+    <bean id="timeInterceptor" class="cn.haitaoss.tinyioc.aop.TimerInterceptor"></bean>
     <!--    增强器-->
     <bean id="aspectjAspect" class="cn.haitaoss.tinyioc.aop.AspectJExpressionPointcutAdvisor">
         <property name="advice" ref="timeInterceptor"></property>
-        <property name="expression" value="execution(* cn.haitaoss.tinyioc.*.helloWorld(..))"></property>
+        <property name="expression" value="execution(* cn.haitaoss.tinyioc..*.*(..))"></property>
     </bean>
 
-    <bean id="outputService" class="cn.haitaoss.tinyioc.OutputServiceImpl">
+
+    <bean id="address" class="cn.haitaoss.tinyioc.Address">
+        <property name="local" value="beijing"></property>
+        <property name="car" ref="car"></property>
     </bean>
 
-    <bean id="helloWorldService" class="cn.haitaoss.tinyioc.HelloWorldServiceImpl">
-        <property name="text" value="Hello World!"></property>
-        <property name="outputService" ref="outputService"></property>
-
+    <bean id="address2" class="cn.haitaoss.tinyioc.Address">
+        <property name="local" value="beijingByConstructor"></property>
     </bean>
+
+
+    <bean id="car" class="cn.haitaoss.tinyioc.Car">
+        <property name="name" value="autotooo"></property>
+        <property name="address" ref="address"></property>
+    </bean>
+
+    <bean id="carByConstructor" class="cn.haitaoss.tinyioc.Car">
+        <constructor-arg value="constructor"/>
+        <constructor-arg ref="address2"/>
+    </bean>
+
 
 </beans>

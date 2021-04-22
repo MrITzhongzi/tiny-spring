@@ -11,7 +11,7 @@
         <property name="outputService" ref="outputService"></property>
     </bean>
 
-    <bean id="beanInitializeLogger" class="cn.haitaoss.tinyioc.BeanInitializeLogger">
+    <bean id="beanInitializeLogger" class="cn.haitaoss.tinyioc.beans.BeanInitializeLogger">
     </bean>
 
 </beans>

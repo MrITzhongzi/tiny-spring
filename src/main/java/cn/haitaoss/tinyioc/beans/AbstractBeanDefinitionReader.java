@@ -1,7 +1,6 @@
 package cn.haitaoss.tinyioc.beans;
 
 
-import cn.haitaoss.tinyioc.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.io.ResourceLoader;
 
 import java.util.HashMap;

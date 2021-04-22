@@ -1,7 +1,7 @@
 package cn.haitaoss.tinyioc.beans.factory;
 
-import cn.haitaoss.tinyioc.BeanDefinition;
 import cn.haitaoss.tinyioc.aop.BeanFactoryAware;
+import cn.haitaoss.tinyioc.beans.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.BeanReference;
 import cn.haitaoss.tinyioc.beans.PropertyValue;
 
@@ -23,7 +23,7 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
      * @param instance
      * @param beanDefinition
      */
-    protected void applyPropertyValues(String name,Object instance, BeanDefinition beanDefinition) throws Exception {
+    protected void applyPropertyValues(String name, Object instance, BeanDefinition beanDefinition) throws Exception {
         // 这一步是为了实现 aop
         if (instance instanceof BeanFactoryAware) {
             ((BeanFactoryAware) instance).setBeanFactory(this);

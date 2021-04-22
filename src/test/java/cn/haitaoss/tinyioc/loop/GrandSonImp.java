@@ -10,7 +10,7 @@ import java.lang.reflect.Proxy;
  * @date 2021-04-18 16:50
  *
  */
-public class GrandSonImp implements GrandSon{
+public class GrandSonImp implements GrandSon {
     private Parent parent;
 
     public void setParent(ParentImpl parent) {
@@ -19,6 +19,6 @@ public class GrandSonImp implements GrandSon{
 
     @Override
     public void say() {
-        System.out.println("parent 是不是代理对象 "+ (parent instanceof Proxy || parent instanceof Factory));
+        System.out.println("parent 是不是代理对象 " + (parent instanceof Proxy || parent instanceof Factory));
     }
 }

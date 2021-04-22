@@ -9,7 +9,7 @@ import org.aopalliance.aop.Advice;
  *
  */
 public class AspectJExpressionPointcutAdvisor implements PointcutAdvisor {
-    private AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
+    private final AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
 
     private Advice advice;
 

@@ -1,9 +1,10 @@
 package cn.haitaoss.tinyioc.beans.xml;
 
-import cn.haitaoss.tinyioc.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.AbstractBeanDefinitionReader;
+import cn.haitaoss.tinyioc.beans.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.BeanReference;
 import cn.haitaoss.tinyioc.beans.PropertyValue;
+import cn.haitaoss.tinyioc.beans.constructor.ConstructorArgument;
 import cn.haitaoss.tinyioc.beans.io.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -64,10 +65,37 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         String name = ele.getAttribute("id");
         String className = ele.getAttribute("class");
         BeanDefinition beanDefinition = new BeanDefinition();
+        // 解析构造器参数
+        processConstructorArgument(ele, beanDefinition);
         processProperty(ele, beanDefinition);
         beanDefinition.setBeanClassName(className);
         getRegistry().put(name, beanDefinition);
 
+    }
+
+
+    private void processConstructorArgument(Element element, BeanDefinition beanDefinition) {
+        NodeList constructorNodes = element.getElementsByTagName("constructor-arg");
+        for (int i = 0; i < constructorNodes.getLength(); i++) {
+            Node node = constructorNodes.item(i);
+            if (node instanceof Element) {
+                Element constructorElement = (Element) node;
+                String name = constructorElement.getAttribute("name");
+                String type = constructorElement.getAttribute("type");
+                String value = constructorElement.getAttribute("value");
+                if (value != null && value.length() > 0) {
+                    beanDefinition.getConstructorArgument().addArgumentValue(new ConstructorArgument.ValueHolder(value, type, name));
+                } else {
+                    String ref = constructorElement.getAttribute("ref");
+                    if (ref == null || ref.length() == 0) {
+                        throw new IllegalArgumentException("Configuration problem: <constructor-arg> element for property '"
+                                + name + "' must specify a ref or value");
+                    }
+                    BeanReference beanReference = new BeanReference(ref);
+                    beanDefinition.getConstructorArgument().addArgumentValue(new ConstructorArgument.ValueHolder(beanReference, type, name));
+                }
+            }
+        }
     }
 
     private void processProperty(Element ele, BeanDefinition beanDefinition) {

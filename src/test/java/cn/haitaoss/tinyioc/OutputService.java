@@ -8,5 +8,6 @@ package cn.haitaoss.tinyioc;
  */
 public interface OutputService {
     void output(String text);
+
     void sayHello();
 }
