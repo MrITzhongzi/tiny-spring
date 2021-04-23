@@ -1,5 +1,6 @@
 package cn.haitaoss.tinyioc.context;
 
+import cn.haitaoss.tinyioc.beans.factory.AbstractBeanFactory;
 import cn.haitaoss.tinyioc.beans.factory.BeanFactory;
 
 /**
@@ -9,4 +10,9 @@ import cn.haitaoss.tinyioc.beans.factory.BeanFactory;
  *
  */
 public interface ApplicationContext extends BeanFactory {
+    ApplicationContext getParent();
+
+    void setParent(ApplicationContext parent);
+
+    AbstractBeanFactory getBeanFactory();
 }

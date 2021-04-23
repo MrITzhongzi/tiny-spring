@@ -21,12 +21,22 @@ import java.util.Map;
  */
 public abstract class AbstractApplicationContext implements ApplicationContext {
     protected AbstractBeanFactory beanFactory;
+    private ApplicationContext parent;
 
     public AbstractApplicationContext(AbstractBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 
+    public ApplicationContext getParent() {
+        return parent;
+    }
+
+    public void setParent(ApplicationContext parent) {
+        this.parent = parent;
+    }
+
     public void refresh() throws Exception {
+        beanFactory.setContext(this);
         // 将读取xml 获取的容器复制到 beanFactory中
         loadBeanDefinitions(beanFactory);
         // 注册类型转换器

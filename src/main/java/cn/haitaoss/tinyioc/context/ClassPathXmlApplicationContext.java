@@ -21,11 +21,16 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     private final String configLocation;
 
     public ClassPathXmlApplicationContext(String configLocation) throws Exception {
-        this(configLocation, new AutowireCapableBeanFactory());
+        this(configLocation, new AutowireCapableBeanFactory(), null);
     }
 
-    public ClassPathXmlApplicationContext(String configLocation, AbstractBeanFactory beanFactory) throws Exception {
+    public ClassPathXmlApplicationContext(ApplicationContext parent, String configLocation) throws Exception {
+        this(configLocation, new AutowireCapableBeanFactory(), parent);
+    }
+
+    public ClassPathXmlApplicationContext(String configLocation, AbstractBeanFactory beanFactory, ApplicationContext parent) throws Exception {
         super(beanFactory);
+        this.setParent(parent);
         this.configLocation = configLocation;
         refresh();
     }
@@ -42,7 +47,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
         // 扫描主包下面的类注册 BeanDefinition
         String packageName = xmlBeanDefinitionReader.getPackageName();
-        if (packageName == null) {
+        if (packageName == null || packageName.length() == 0) {
             return;
         }
         AnnotationParser annotationParser = new AnnotationParser();
@@ -65,5 +70,10 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
             }
         }
+    }
+
+    @Override
+    public AbstractBeanFactory getBeanFactory() {
+        return beanFactory;
     }
 }

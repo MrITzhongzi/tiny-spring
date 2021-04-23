@@ -6,6 +6,8 @@ import cn.haitaoss.tinyioc.beans.BeanReference;
 import cn.haitaoss.tinyioc.beans.ConstructorArgument;
 import cn.haitaoss.tinyioc.beans.converter.ConverterFactory;
 import cn.haitaoss.tinyioc.beans.lifecycle.InitializingBean;
+import cn.haitaoss.tinyioc.context.AbstractApplicationContext;
+import cn.haitaoss.tinyioc.context.ApplicationContext;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -31,6 +33,15 @@ public abstract class AbstractBeanFactory implements BeanFactory {
     protected Map<String, Object> firstCache = new HashMap<>();
     // 解析基本数据类型
     protected ConverterFactory converterFactory = new ConverterFactory();
+    protected AbstractApplicationContext context;
+
+    public AbstractApplicationContext getContext() {
+        return context;
+    }
+
+    public void setContext(AbstractApplicationContext context) {
+        this.context = context;
+    }
 
     public ConverterFactory getConverterFactory() {
         return converterFactory;
@@ -63,9 +74,23 @@ public abstract class AbstractBeanFactory implements BeanFactory {
     @Override
     public Object getBean(String name) throws Exception {
         BeanDefinition beanDefinition = beanDefinitionMap.get(name);
-        if (beanDefinition == null) {
-            throw new IllegalArgumentException("No bean named " + name + "is defined");
+
+        ApplicationContext context = this.getContext();
+        // 当前容器中找不到从父容器中获取bean
+        while (beanDefinition == null && context.getParent() != null) {
+            ApplicationContext parent = context.getParent();
+            Object object = parent.getBean(name);
+            if (object != null) {
+                return object;
+            } else {
+                context = parent;
+            }
         }
+
+        if (beanDefinition == null) {
+            throw new IllegalArgumentException("No bean named " + name + " is defined");
+        }
+
         Object bean = beanDefinition.getBean(); // null
         // 如果bean为null 或者不是单例bean
         if (bean == null || !beanDefinition.isSingleton()) {

@@ -1,7 +1,7 @@
 package cn.haitaoss.tinyioc.context;
 
+import cn.haitaoss.tinyioc.Anything;
 import cn.haitaoss.tinyioc.HelloWorldService;
-import cn.haitaoss.tinyioc.OutputService;
 import cn.haitaoss.tinyioc.beans.factory.AutowireCapableBeanFactory;
 import org.junit.Test;
 
@@ -16,15 +16,9 @@ public class ApplicationContextTest {
     public void test() throws Exception {
         AutowireCapableBeanFactory beanFactory = new AutowireCapableBeanFactory();
         String configLocation = "tinyioc.xml";
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(configLocation, beanFactory);
-
-        HelloWorldService helloWorldService = (HelloWorldService) context.getBean("helloWorldService");
-        // helloWorldService.helloWorld();
-        helloWorldService.sayHello();
-        OutputService outputService = (OutputService) context.getBean("outputService");
-        // outputService.output("hello world");
-        outputService.sayHello();
-
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(configLocation);
+        Anything anything = (Anything) context.getBean("anything");
+        System.out.println(anything.getPoint());
     }
 
     @Test

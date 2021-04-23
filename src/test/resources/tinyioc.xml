@@ -50,5 +50,4 @@
     </bean>
 
     <bean id="pointConverter" class="cn.haitaoss.tinyioc.beans.converter.PointConverter"></bean>
-
 </beans>

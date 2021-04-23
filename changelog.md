@@ -285,3 +285,40 @@ public Object getBean(String name) throws Exception {
 
     
 
+# 实现IOC容器的嵌套(父容器)
+
+1. 创建ApplicationContext 时可以传入父容器
+2. getBean() 获取对象时。如果当前IOC容器没有，就尝试从父容器获取
+
+```java
+public Object getBean(String name) throws Exception {
+  BeanDefinition beanDefinition = beanDefinitionMap.get(name);
+  ApplicationContext context = this.getContext();
+  
+  // 当前容器中找不到从父容器中获取bean
+  while (beanDefinition == null && context.getParent() != null) {
+    ApplicationContext parent = context.getParent();
+    Object object = parent.getBean(name);
+    if (object != null) {
+      return object;
+    } else {
+      context = parent;
+    }
+  }
+
+  if (beanDefinition == null) {
+    throw new IllegalArgumentException("No bean named " + name + " is defined");
+  }
+
+  Object bean = beanDefinition.getBean(); // null
+  // 如果bean为null 或者不是单例bean
+  if (bean == null || !beanDefinition.isSingleton()) {
+    bean = doCreateBean(name, beanDefinition);
+    bean = initializeBean(bean, name); // 代理操作
+    // 将操作过的bean重新设置到beanDefinition中
+    beanDefinition.setBean(bean); // 修改beandefinition 里面的bean
+  }
+  return bean;
+}
+```
+
