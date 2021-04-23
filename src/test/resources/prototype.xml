@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+    <bean id="carPrototype" class="cn.haitaoss.tinyioc.Car" scope="prototype"></bean>
+    <bean id="carSingleton" class="cn.haitaoss.tinyioc.Car"></bean>
+</beans>

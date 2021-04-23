@@ -1,6 +1,7 @@
 package cn.haitaoss.tinyioc.context;
 
 import cn.haitaoss.tinyioc.beans.BeanDefinition;
+import cn.haitaoss.tinyioc.beans.annotation.annotationParser.AnnotationParser;
 import cn.haitaoss.tinyioc.beans.factory.AbstractBeanFactory;
 import cn.haitaoss.tinyioc.beans.factory.AutowireCapableBeanFactory;
 import cn.haitaoss.tinyioc.beans.io.ResourceLoader;
@@ -31,10 +32,22 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
     @Override
     public void loadBeanDefinitions(AbstractBeanFactory beanFactory) throws Exception {
+        // 去取xml配置文件注册 BeanDefinition
         XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(new ResourceLoader());
         xmlBeanDefinitionReader.loadBeanDefinitions(configLocation);
 
         for (Map.Entry<String, BeanDefinition> entry : xmlBeanDefinitionReader.getRegistry().entrySet()) {
+            beanFactory.registerBeanDefinition(entry.getKey(), entry.getValue());
+        }
+
+        // 扫描主包下面的类注册 BeanDefinition
+        String packageName = xmlBeanDefinitionReader.getPackageName();
+        if (packageName == null) {
+            return;
+        }
+        AnnotationParser annotationParser = new AnnotationParser();
+        annotationParser.annotationBeanDefinitionReader(packageName);
+        for (Map.Entry<String, BeanDefinition> entry : annotationParser.getRegistry().entrySet()) {
             beanFactory.registerBeanDefinition(entry.getKey(), entry.getValue());
         }
     }

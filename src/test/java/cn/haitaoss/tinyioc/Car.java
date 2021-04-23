@@ -1,5 +1,7 @@
 package cn.haitaoss.tinyioc;
 
+import cn.haitaoss.tinyioc.beans.annotation.Autowired;
+
 /**
  * @author haitao.chen
  * @email haitaoss@aliyun.com
@@ -8,6 +10,7 @@ package cn.haitaoss.tinyioc;
  */
 public class Car implements Driveable {
     private String name;
+    @Autowired
     private Liveable address;
     private int price;
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+    <component-scan base-package="cn.haitaoss"/>
+    <bean id="carWithXml" class="cn.haitaoss.tinyioc.Car">
+        <property name="name" value="carWithXml"></property>
+        <property name="price" value="10086"></property>
+    </bean>
+    <bean id="studentWithXml" class="cn.haitaoss.tinyioc.Student">
+        <property name="stuName" value="studentWithXml"></property>
+    </bean>
+</beans>

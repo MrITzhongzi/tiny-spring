@@ -15,10 +15,19 @@ import java.util.Map;
 public abstract class AbstractBeanDefinitionReader implements BeanDefinitionReader {
     private final Map<String, BeanDefinition> registry;
     private final ResourceLoader resourceLoader;
+    private String packageName;
 
     public AbstractBeanDefinitionReader(ResourceLoader resourceLoader) {
         this.registry = new HashMap<>();
         this.resourceLoader = resourceLoader;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public Map<String, BeanDefinition> getRegistry() {

@@ -40,7 +40,7 @@ public class XmlBeanDefinitionReaderTest {
         // 读取bean 标签的内容
         NodeList beanNodeList = rootElement.getChildNodes();
         for (int i = 0; i < beanNodeList.getLength(); i++) {
-//            获取标签的实际内容
+            // 获取标签的实际内容
             Node node = beanNodeList.item(i);
             // System.out.println(node.getClass()); // 有text 和 Element两种类型
             if (node instanceof Element) {

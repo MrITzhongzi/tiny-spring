@@ -4,6 +4,8 @@ import cn.haitaoss.tinyioc.aop.BeanFactoryAware;
 import cn.haitaoss.tinyioc.beans.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.BeanReference;
 import cn.haitaoss.tinyioc.beans.PropertyValue;
+import cn.haitaoss.tinyioc.beans.annotation.Autowired;
+import cn.haitaoss.tinyioc.beans.converter.ConverterFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -15,6 +17,26 @@ import java.lang.reflect.Method;
  *  可自动装配内容的BeanFactory
  */
 public class AutowireCapableBeanFactory extends AbstractBeanFactory {
+    protected void injectAnnotation(String name, Object bean, BeanDefinition beanDefinition) throws Exception {
+        Field[] fields = bean.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            Autowired autowired = field.getAnnotation(Autowired.class);
+            if (autowired == null)
+                continue;
+            String refName = autowired.getId();
+            if (refName.equals("")) {
+                refName = field.getName();
+            }
+            // 当前引用的属性值可能没有初始化完成，也就是这个属性值需要重新赋值，所以将当前bean存储二级缓存，后面会对其ref属性重新赋值
+            if (!firstCache.containsKey(refName)) {
+                // 添加到二级缓存
+                secondCache.put(name, null);
+            }
+            field.setAccessible(true);
+            field.set(bean, getBean(refName));
+        }
+    }
+
     /**
      * 设置属性的值
      * @author haitao.chen
@@ -45,6 +67,7 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
                     // beanReference.getName()是 a，instance 是 b，
                     // secondCache.put(refName, instance);
                     secondCache.put(name, null); // key是这个bean对应的属性不完整
+                    // secondCache.put(refName, instance);
                 }
             }
             // 非ref字段，对value进行处理，将string转化成对应类型
@@ -53,7 +76,7 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
                 if (field.getType().toString().equals("class java.lang.String"))
                     convertedValue = value;
                 else
-                    convertedValue = this.converterFactory.getConverterMap().get(field.getType()).parse((String) value);
+                    convertedValue = ConverterFactory.getConverterMap().get(field.getType()).parse((String) value);
             }
             try {
                 Method declaredMethod = instance.getClass().getDeclaredMethod(

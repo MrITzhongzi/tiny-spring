@@ -4,6 +4,7 @@ import cn.haitaoss.tinyioc.beans.BeanDefinition;
 import cn.haitaoss.tinyioc.beans.BeanPostProcessor;
 import cn.haitaoss.tinyioc.beans.PropertyValue;
 import cn.haitaoss.tinyioc.beans.converter.Converter;
+import cn.haitaoss.tinyioc.beans.converter.ConverterFactory;
 import cn.haitaoss.tinyioc.beans.factory.AbstractBeanFactory;
 
 import java.lang.reflect.Field;
@@ -40,7 +41,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         List beanConverters = beanFactory.getBeansForType(Converter.class);
         for (Object converter : beanConverters) {
             Type type = ((Converter) converter).getType();
-            beanFactory.getConverterFactory().getConverterMap().put(type, (Converter) converter);
+            ConverterFactory.getConverterMap().put(type, (Converter) converter);
         }
     }
 

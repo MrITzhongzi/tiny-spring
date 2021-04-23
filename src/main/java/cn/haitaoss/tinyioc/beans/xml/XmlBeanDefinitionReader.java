@@ -1,10 +1,6 @@
 package cn.haitaoss.tinyioc.beans.xml;
 
-import cn.haitaoss.tinyioc.beans.AbstractBeanDefinitionReader;
-import cn.haitaoss.tinyioc.beans.BeanDefinition;
-import cn.haitaoss.tinyioc.beans.BeanReference;
-import cn.haitaoss.tinyioc.beans.PropertyValue;
-import cn.haitaoss.tinyioc.beans.ConstructorArgument;
+import cn.haitaoss.tinyioc.beans.*;
 import cn.haitaoss.tinyioc.beans.io.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -50,14 +46,24 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     }
 
     private void parseBeanDefinitions(Element root) {
-        NodeList nl = root.getChildNodes(); // bean
+        NodeList nl = root.getChildNodes(); // bean 标签 或者 component-scan 标签
         for (int i = 0; i < nl.getLength(); i++) {
             Node node = nl.item(i);
             if (node instanceof Element) {
                 Element ele = (Element) node;
-                processBeanDefinition(ele);
+                // 读取base-package 标签 注册BeanDefinition
+                String packageName = null;
+                if ((packageName = ele.getAttribute("base-package")) != null && packageName != "") {
+                    this.setPackageName(packageName);
+                } else {
+                    processBeanDefinition(ele);
+                }
             }
         }
+
+    }
+
+    private void processBeanDefinitionEle(Element ele) {
 
     }
 
@@ -65,6 +71,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         String name = ele.getAttribute("id");
         String className = ele.getAttribute("class");
         BeanDefinition beanDefinition = new BeanDefinition();
+        // 解析是否是单例
+        String scope = ele.getAttribute("scope");
+        beanDefinition.setSingleton(scope == null || scope.length() == 0 || scope.equals("singleton"));
         // 解析构造器参数
         processConstructorArgument(ele, beanDefinition);
         processProperty(ele, beanDefinition);

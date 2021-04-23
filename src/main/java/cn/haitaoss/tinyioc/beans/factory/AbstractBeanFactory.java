@@ -67,7 +67,8 @@ public abstract class AbstractBeanFactory implements BeanFactory {
             throw new IllegalArgumentException("No bean named " + name + "is defined");
         }
         Object bean = beanDefinition.getBean(); // null
-        if (bean == null) {
+        // 如果bean为null 或者不是单例bean
+        if (bean == null || !beanDefinition.isSingleton()) {
             bean = doCreateBean(name, beanDefinition);
             bean = initializeBean(bean, name); // 代理操作
             // 将操作过的bean重新设置到beanDefinition中
@@ -149,14 +150,20 @@ public abstract class AbstractBeanFactory implements BeanFactory {
         thirdCache.put(name, bean);
         beanDefinition.setBean(bean);
         applyPropertyValues(name, bean, beanDefinition);
+        // 解析类里面的注解
+        injectAnnotation(name, bean, beanDefinition);
         // 生命周期
-        if(bean instanceof InitializingBean){
+        if (bean instanceof InitializingBean) {
             ((InitializingBean) bean).afterPropertiesSet();
         }
         return bean;
     }
 
     protected void applyPropertyValues(String name, Object bean, BeanDefinition beanDefinition) throws Exception {
+
+    }
+
+    protected void injectAnnotation(String name, Object bean, BeanDefinition beanDefinition) throws Exception {
 
     }
 

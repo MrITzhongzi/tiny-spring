@@ -12,8 +12,17 @@ public class BeanDefinition {
     private String beanClassName;
     private PropertyValues propertyValues = new PropertyValues();
     private ConstructorArgument constructorArgument = new ConstructorArgument();
+    private boolean isSingleton;
 
     public BeanDefinition() {
+    }
+
+    public boolean isSingleton() {
+        return isSingleton;
+    }
+
+    public void setSingleton(boolean singleton) {
+        isSingleton = singleton;
     }
 
     public ConstructorArgument getConstructorArgument() {

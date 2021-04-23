@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+    <bean id="school" class="cn.haitaoss.tinyioc.School">
+        <property name="name" value="njust"></property>
+    </bean>
+    <bean id="student" class="cn.haitaoss.tinyioc.Student">
+        <property name="stuName" value="黄大宁"></property>
+    </bean>
+</beans>
