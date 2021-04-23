@@ -37,13 +37,13 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 
     public void refresh() throws Exception {
         beanFactory.setContext(this);
-        // 将读取xml 获取的容器复制到 beanFactory中
+        // 将读取xml、class 获取的容器复制到 beanFactory中
         loadBeanDefinitions(beanFactory);
         // 注册类型转换器
         registerConverter(beanFactory);
         // 注册beanPostProcessor
         registerBeanPostProcessors(beanFactory);
-        // 创建出ioc容器中所有的对象
+        // 创建出ioc容器中所有剩余的单实例对象
         onRefresh();
     }
 

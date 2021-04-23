@@ -211,6 +211,7 @@ public abstract class AbstractBeanFactory implements BeanFactory {
             // class2是不是class1的子类或者子接口
             // class1.isAssignableFrom(class2) AspectJAwareAdvisorAutoProxyCreator
             if (type.isAssignableFrom(beanDefinitionMap.get(beanDefinitionName).getBeanClass())) {
+                // 创建出这个bean
                 beans.add(getBean(beanDefinitionName));
             }
         }

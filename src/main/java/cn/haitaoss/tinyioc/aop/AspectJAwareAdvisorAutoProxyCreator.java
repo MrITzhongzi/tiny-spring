@@ -50,7 +50,8 @@ public class AspectJAwareAdvisorAutoProxyCreator implements BeanPostProcessor, B
                 TargetSource targetSource = new TargetSource(bean, bean.getClass(), bean.getClass().getInterfaces());
                 advisedSupport.setTargetSource(targetSource);
 
-                return advisedSupport.getProxy();
+                // 代理对象套娃
+                bean = advisedSupport.getProxy();
             }
         }
         return bean;

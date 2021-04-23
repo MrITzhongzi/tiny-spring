@@ -322,3 +322,8 @@ public Object getBean(String name) throws Exception {
 }
 ```
 
+# 实现拦截器链(套娃代理)
+
+aop表达式匹配成功创建代理对象，不直接返回而是遍历出所有的增强器对bean进行嵌套代理
+
+**代理这一块其实有很多问题我们解决**

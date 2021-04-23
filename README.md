@@ -288,3 +288,531 @@ AOP Alliance 是AOP的接口标准，定义了 AOP 中的基础概念(Advice、C
     - 操作上，JDK动态代理创建为Proxy类实例，且必须要传入InvocationHandler类，而Cglib创建为Enhancer类实例，且必须传入MethodInterceptor类（注意包的问题，这个MethodInterceptor是CGlib中的）。
     - Advice即代理代码的实现上，JDK动态代理可以在InvocationHandler中重写invoke实现，或者在InvocationHandler.invoke中调用methodInterceptor.invoke（methodInvocation），将代理的业务代码交给methodInterceptor去做，被代理实例方法的运行通过参数methodInvocation.proceed()实现。而在CGlib中，通过methodInterceptor.intercept()实现代理增强，值得注意的是，这个方法内部有四个参数，包括一个被代理实例，而JDK的InvocationHandler.invoke却不包含被代理实例。
     
+# Spring总结
+
+## 核心功能
+
+- XmlBeanDefinitionReader。读取xml配置文件 将每一个bean 封装成 BeanDefinition。如果有component-scan标签就保存base-package 的值。
+- AnnotationParser。以 base-package 为主目录，递归收集所有非内部类的class。遍历这些class找到使用了（Component、Repository、Service、Controller）注解的class，封装成 BeanDefinition。
+- BeanPostProcessor。Bean的初始化会调用这个接口里面的方法。
+- AspectJAwareAdvisorAutoProxyCreator。他其实就是BeanPostProcessor 的实现，借助BeanPostProcessor 实现aop 和 ioc容器初始化的织入。
+- Converter。类型转换器，对于非基本数据类型、非BeanReference类型的属性的赋值。我们需要实现这个接口自定义属性的值。
+- ProxyFactory。返回代理对象，至于是jdk代理还是cglib代理看配置。
+- AspectJExpressionPointcutAdvisor。校验切入点表达式、增强方法
+
+## 关键的类
+
+BeanDefinition：保存bean的元数据
+
+```java
+public class BeanDefinition {
+    private Object bean;
+    private Class beanClass;
+    private String beanClassName;
+    private PropertyValues propertyValues = new PropertyValues();
+    private ConstructorArgument constructorArgument = new ConstructorArgument();
+    private boolean isSingleton;
+}
+```
+
+AbstractBeanFactory：就是applicationContext
+
+```java
+public abstract class AbstractBeanFactory implements BeanFactory {
+    private final List<String> beanDefinitionNames = new ArrayList<>();  // 记录所有bean的名字，用于提前创建bean还有就是收集beanpostProcessor
+    private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(); // 容器
+    private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>(); // 记录容器中所有的beanPostProcessor
+    // 三级缓存 解决循环引用缺少代理的问题
+    protected Map<String, Object> secondCache = new HashMap<>();
+    protected Map<String, Object> thirdCache = new HashMap<>();
+    protected Map<String, Object> firstCache = new HashMap<>();
+    // 解析基本数据类型
+    protected ConverterFactory converterFactory = new ConverterFactory();
+    protected AbstractApplicationContext context;
+}
+```
+
+AdvisedSupport：被代理类的容器类。
+
+```java
+public class AdvisedSupport {
+    private TargetSource targetSource;
+    private MethodInterceptor methodInterceptor;
+    private MethodMatcher methodMatcher; // 切面编程需要的东西
+
+    public MethodMatcher getMethodMatcher() {
+        return methodMatcher;
+    }
+
+    public void setMethodMatcher(MethodMatcher methodMatcher) {
+        this.methodMatcher = methodMatcher;
+    }
+
+    public TargetSource getTargetSource() {
+        return targetSource;
+    }
+
+    public void setTargetSource(TargetSource targetSource) {
+        this.targetSource = targetSource;
+    }
+
+    public MethodInterceptor getMethodInterceptor() {
+        return methodInterceptor;
+    }
+
+    public void setMethodInterceptor(MethodInterceptor methodInterceptor) {
+        this.methodInterceptor = methodInterceptor;
+    }
+}
+
+```
+
+
+
+## IOC容器构建流程
+
+1. 创建IOC容器
+
+```java
+public ClassPathXmlApplicationContext(String configLocation, AbstractBeanFactory beanFactory, ApplicationContext parent) throws Exception {
+  super(beanFactory);
+  this.setParent(parent);
+  this.configLocation = configLocation;
+  
+  // 刷新操作
+  refresh();
+}
+```
+
+2. refresh()
+
+```java
+public void refresh() throws Exception {
+  beanFactory.setContext(this);
+  // 将读取xml、class 获取的容器复制到 beanFactory中
+  loadBeanDefinitions(beanFactory);
+  // 注册类型转换器
+  registerConverter(beanFactory);
+  // 注册beanPostProcessor
+  registerBeanPostProcessors(beanFactory);
+  // 创建出ioc容器中所有剩余的单实例对象
+  onRefresh();
+}
+```
+
+3. loadBeanDefinitions
+
+   1. xmlBeanDefinitionReader
+      - 读取xml的原理很简单。通过Document相关的api获取xml的根节点beans。在获取子节点bean或者component-scan。一个bean会对应封装成BeanDefinition，然后保存到一个map中临时存储。
+      - bean下面会有property标签。property标签会封装成PropertyValue对象，然后保存到BeanDefinition中
+      - property标签有两种情况，value 或者 ref。如果是ref 会创建一个BeanReference对象，表示这个属性的值应该从IOC容器中获取
+      - bean下面还会有 constructor-arg 标签。会封装成 ValueHolder对象 保存到BeanDefinition的ConstructorArgument中
+   2. AnnotationParser
+      - 以packageName为起点，递归遍历所有的目录。收集所有非内部类的class
+      - 遍历class 找到包含 {Component.class, Service.class, Repository.class, Controller.class}; 的class实例，一个class 实例对应一个BeanDefinition
+      - 遍历class实例里面的所有属性，找到使用@Value注解标注的属性。将这个属性封装成PropertyValue 保存到 BeanDefinition中
+
+   ```java
+    @Override
+       public void loadBeanDefinitions(AbstractBeanFactory beanFactory) throws Exception {
+           // 读取xml配置文件注册 BeanDefinition
+           XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(new ResourceLoader());
+           xmlBeanDefinitionReader.loadBeanDefinitions(configLocation);
+   
+           for (Map.Entry<String, BeanDefinition> entry : xmlBeanDefinitionReader.getRegistry().entrySet()) {
+               beanFactory.registerBeanDefinition(entry.getKey(), entry.getValue());
+           }
+   
+           // 扫描主包下面的类注册 BeanDefinition
+           String packageName = xmlBeanDefinitionReader.getPackageName();
+           if (packageName == null || packageName.length() == 0) {
+               return;
+           }
+           AnnotationParser annotationParser = new AnnotationParser();
+           annotationParser.annotationBeanDefinitionReader(packageName);
+           for (Map.Entry<String, BeanDefinition> entry : annotationParser.getRegistry().entrySet()) {
+               beanFactory.registerBeanDefinition(entry.getKey(), entry.getValue());
+           }
+       }
+   ```
+
+   3. 注册 BeanDefiniton 到IOC容器中
+      - 遍历xmlBeanDefinitionReader、AnnotationParser 中临时收集内容保存到IOC容器中
+      - beanDefinitionNames 保存name的目的是为了后面容易收集东西
+
+   ```java
+   public void registerBeanDefinition(String name, BeanDefinition beanDefinition) throws Exception {
+           beanDefinitionMap.put(name, beanDefinition);
+           beanDefinitionNames.add(name);
+       }
+   ```
+
+4. registerConverter(beanFactory); 注册类型转换器
+
+   ```java
+   protected void registerConverter(AbstractBeanFactory beanFactory) throws Exception {
+     			// 收集Converter的时候会创建出这个实例（也就是会比单例bean 提前创建）
+           List beanConverters = beanFactory.getBeansForType(Converter.class);
+           for (Object converter : beanConverters) {
+               Type type = ((Converter) converter).getType();
+               ConverterFactory.getConverterMap().put(type, (Converter) converter);
+           }
+       }
+   ```
+
+   - 就是遍历容器里面所以定义好的bean，找到该类型的实现
+
+   ```java
+   // 从容器中获取BeanPostProcessor 的子类或者子接口
+   public List getBeansForType(Class type) throws Exception {
+           // BeanPostProcessor.class
+           List beans = new ArrayList<Object>();
+           for (String beanDefinitionName : beanDefinitionNames) {
+               // class2是不是class1的子类或者子接口
+               // class1.isAssignableFrom(class2) AspectJAwareAdvisorAutoProxyCreator
+               if (type.isAssignableFrom(beanDefinitionMap.get(beanDefinitionName).getBeanClass())) {
+                   // 创建出这个bean
+                   beans.add(getBean(beanDefinitionName));
+               }
+           }
+           return beans;
+       }
+   ```
+
+5. registerBeanPostProcessors(beanFactory); 注册BeanPostProcessor
+
+   ```java
+   protected void registerBeanPostProcessors(AbstractBeanFactory beanFactory) throws Exception {
+           // 从容器中获取所有的BeanPostProcessor
+           List beanPostProcessors = beanFactory.getBeansForType(BeanPostProcessor.class);
+   
+           // beanPostProcessor
+           for (Object beanPostProcessor : beanPostProcessors) {
+               beanFactory.addBeanPostProcessor((BeanPostProcessor) beanPostProcessor);
+           }
+       }
+   ```
+
+6. onRefresh();
+
+   ```java
+   protected void onRefresh() throws Exception {
+     beanFactory.preInstantiateSingletons(); // 预加载容器中所有的bean
+     checkoutAll(); // 使用三级缓存解决循环依赖，属性赋值不正确的问题
+   }
+   ```
+
+   ```java
+   public void preInstantiateSingletons() throws Exception {
+           for (String beanName : beanDefinitionNames) {
+               getBean(beanName);
+           }
+       }
+   ```
+
+   
+
+7. getBean()
+
+   - 从beanDefinitionMap 获取BeanDefinition，拿不到说明这个bean没有声明过
+   - 如果当前容器中拿不到，可以从容器中获取。如果遍历的所有上下文容器还是拿不到BeanDefinition，说明并没有定义过，直接抛出异常
+   -  beanDefinition.getBean==null 说明这个bean还没有初始化，我们应该创建出来
+   - 两种情况需要创建bean：1. 这个bean还没有创建过。2. 这个bean不是单例类型的
+
+   ```java
+   public Object getBean(String name) throws Exception {
+     BeanDefinition beanDefinition = beanDefinitionMap.get(name);
+   
+     ApplicationContext context = this.getContext();
+     // 当前容器中找不到从父容器中获取bean
+     while (beanDefinition == null && context.getParent() != null) {
+       ApplicationContext parent = context.getParent();
+       Object object = parent.getBean(name);
+       if (object != null) {
+         return object;
+       } else {
+         context = parent;
+       }
+     }
+   
+     if (beanDefinition == null) {
+       throw new IllegalArgumentException("No bean named " + name + " is defined");
+     }
+   
+     Object bean = beanDefinition.getBean(); // null
+     // 如果bean为null 或者不是单例bean
+     if (bean == null || !beanDefinition.isSingleton()) {
+       bean = doCreateBean(name, beanDefinition);
+       bean = initializeBean(bean, name); // 代理操作
+       // 将操作过的bean重新设置到beanDefinition中
+       beanDefinition.setBean(bean); // 修改beandefinition 里面的bean
+     }
+     return bean;
+   }
+   ```
+
+8. doCreateBean
+
+   ```java
+   protected Object doCreateBean(String name, BeanDefinition beanDefinition) throws Exception {
+     Object bean = createBeanInstance(beanDefinition);
+     // thirdCache中放置的全是空构造方法构造出的实例
+     thirdCache.put(name, bean);
+     beanDefinition.setBean(bean);
+     applyPropertyValues(name, bean, beanDefinition);
+     // 解析类里面的注解
+     injectAnnotation(name, bean, beanDefinition);
+     // 生命周期
+     if (bean instanceof InitializingBean) {
+       ((InitializingBean) bean).afterPropertiesSet();
+     }
+     return bean;
+   }
+   ```
+
+   - createBeanInstance 通过构造器初始化bean
+
+     ```java
+     // 没有使用构造器参数，那么就使用无参构造器初始化
+     if (beanDefinition.getConstructorArgument().isEmpty()) {
+       return beanDefinition.getBeanClass().newInstance();
+     } else {
+       List<ConstructorArgument.ValueHolder> valueHolders = beanDefinition.getConstructorArgument().getArgumentValues();
+       return constructor.newInstance(params);
+     }
+     ```
+
+   - 将初始化的bean保存到三级缓存中。用于解决循环依赖的问题
+
+   - 将BeanDefinition中收集的bean的属性注入到刚创建出来的bean中
+
+     ```java
+     protected void applyPropertyValues(String name, Object instance, BeanDefinition beanDefinition) throws Exception {
+       // bean的一些定制接口
+       if (instance instanceof BeanFactoryAware) {
+         ((BeanFactoryAware) instance).setBeanFactory(this);
+       }
+     
+       for (PropertyValue propertyValue : beanDefinition.getPropertyValues().getPropertyValueList()) {
+         Object value = propertyValue.getValue();
+         Object convertedValue = null;
+     
+         // 如果是BeanReference 类型的
+         if (value instanceof BeanReference) {
+           // ref 类型的就创建BeanReference
+           BeanReference beanReference = (BeanReference) value;
+           String refName = beanReference.getName();
+           value = getBean(refName);
+           convertedValue = value;
+           // 说明当前是循环依赖状态
+           if (thirdCache.containsKey(refName) && !firstCache.containsKey(refName)) {
+             secondCache.put(name, null); // key是这个bean对应的属性不完整
+           }
+         }
+         // 非ref字段，对value进行处理，将string转化成对应类型
+         else {
+           Field field = instance.getClass().getDeclaredField(propertyValue.getName());// 获得name对应的字段
+           
+           if (field.getType().toString().equals("class java.lang.String"))
+             convertedValue = value;
+           else
+        			// 不是String类型的，我们应该从converterFactory中获取转换器来解析     
+             convertedValue = ConverterFactory.getConverterMap().get(field.getType()).parse((String) value);
+         }
+         // 反射赋值
+         try {
+           Method declaredMethod = instance.getClass().getDeclaredMethod(
+             "set" + propertyValue.getName().substring(0, 1).toUpperCase()
+             + propertyValue.getName().substring(1), value.getClass());
+           declaredMethod.setAccessible(true);
+     
+           declaredMethod.invoke(instance, convertedValue);
+         } catch (NoSuchMethodException e) {
+           // 没有提供set方法也设置
+           Field declaredField = instance.getClass().getDeclaredField(propertyValue.getName());
+           declaredField.setAccessible(true);
+           declaredField.set(instance, convertedValue);
+         }
+       }
+     }
+     ```
+
+     
+
+   - 解析bean里面的注解，就是扫描bean里面的 Autowired注解
+
+     ```java
+     protected void injectAnnotation(String name, Object bean, BeanDefinition beanDefinition) throws Exception {
+       Field[] fields = bean.getClass().getDeclaredFields();
+       for (Field field : fields) {
+         Autowired autowired = field.getAnnotation(Autowired.class);
+         if (autowired == null)
+           continue;
+         String refName = autowired.getId();
+         if (refName.equals("")) {
+           refName = field.getName();
+         }
+         // 当前引用的属性值可能没有初始化完成，也就是这个属性值需要重新赋值，所以将当前bean存储二级缓存，后面会对其ref属性重新赋值
+         if (!firstCache.containsKey(refName)) {
+           // 添加到二级缓存
+           secondCache.put(name, null);
+         }
+         field.setAccessible(true);
+         field.set(bean, getBean(refName));
+       }
+     }
+     ```
+
+9. initializeBean(bean, name);
+
+   - 完成bean的初始化化操作，最好将初始化好的bean保存到三级缓存中
+
+   ```java
+   protected Object initializeBean(Object bean, String name) throws Exception {
+     //  初始化前操作
+     for (BeanPostProcessor beanPostProcessor : beanPostProcessors) { // beanPostProcessors.size() = 0
+       bean = beanPostProcessor.postProcessBeforeInitialization(bean, name);
+     }
+     // bean 的初始化操作
+     try {
+       Method method = bean.getClass().getMethod("init_method", null);
+       method.invoke(bean, null);
+     } catch (Exception e) {
+   
+     }
+   
+     // 初始化后的操作
+     for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
+       bean = beanPostProcessor.postProcessAfterInitialization(bean, name);
+     }
+   
+     // 初始化完成放入三级缓存
+     if (thirdCache.containsKey(name)) {
+       firstCache.put(name, bean);
+     }
+   
+     return bean;
+   }
+   ```
+
+10. AspectJAwareAdvisorAutoProxyCreator 实现了BeanPostProcessor接口，所以能在初始化做工作
+
+    - 如果是切面类直接返回，不需要增强
+    - 如果是增强的功能直接返回，不需要增强
+    - `getBeansForType(AspectJExpressionPointcutAdvisor.class);`拿到容器里面的所有切面,遍历
+      - 如果当前bean 符合切入点表达式，那么应该代理当前bean。
+      - 将被代理类、增强方法、MethodMatcher包装成advisedSupport。
+        - 封装的目的是，被代理类应该知道他自己挣钱的功能是什么。
+        - 还有就是调用被代理类的方法时，需要判断当前方法符不符合切入点表达式，符合才使用增强器来调用方法。
+      - 代理advisedSupport。
+
+    ```java
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws Exception {
+      // 实现对对象的代理操作
+      if (bean instanceof AspectJExpressionPointcutAdvisor) {
+        return bean;
+      }
+    
+      if (bean instanceof MethodInterceptor) {
+        return bean;
+      }
+    
+      // 找到被代理对象的增强方法  将被代理对象和增强方法包转到 AdviseSupport
+    
+      // 从IOC容器中 获取所有的切面
+      List<AspectJExpressionPointcutAdvisor> advisors = beanFactory
+        .getBeansForType(AspectJExpressionPointcutAdvisor.class);
+    
+      for (AspectJExpressionPointcutAdvisor advisor : advisors) {
+        // 判断当前对象是否需要增强
+        // execution(* cn.haitaoss.tinyioc.*.*(..))
+        if (advisor.getPointcut().getClassFilter().matches(bean.getClass())) {
+    
+          ProxyFactory advisedSupport = new ProxyFactory();
+          advisedSupport.setMethodInterceptor((MethodInterceptor) advisor.getAdvice()); // 增强方法
+          advisedSupport.setMethodMatcher(advisor.getPointcut().getMethodMatcher()); // 方法校验器
+    
+          TargetSource targetSource = new TargetSource(bean, bean.getClass(), bean.getClass().getInterfaces());
+          advisedSupport.setTargetSource(targetSource);
+    
+          // 代理对象套娃
+          bean = advisedSupport.getProxy();
+        }
+      }
+      return bean;
+    }
+    ```
+
+    代理对象的InvocationHandler
+
+    ```java
+    @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    
+            MethodInterceptor methodInterceptor = advised.getMethodInterceptor(); // 获取增强方法
+    
+            // 通过切面表达式实现只代理符合切入点表达式的方法
+            if (advised.getMethodMatcher() != null
+                    && advised.getMethodMatcher().matches(method, advised.getTargetSource().getTarget().getClass())) {
+    
+                // 被代理
+                return methodInterceptor.invoke(new ReflectiveMethodInvocation(advised.getTargetSource().getTarget(),
+                        method, args));
+            } else {
+                // 不被代理
+                return method.invoke(advised.getTargetSource().getTarget(), args);
+            }
+        }
+    ```
+
+    
+
+11. checkoutAll。给有缺陷的bean重新赋值
+
+    ```java
+    // 二级缓存中 key就是属性不完整的bean。我们需要对他的属性重新赋值。
+    for (Map.Entry<String, Object> entry : secondCache.entrySet()) {
+      String invokeBeanName = entry.getKey();
+      BeanDefinition beanDefinition = beanDefinitionMap.get(invokeBeanName);
+      try {
+        resetReference(invokeBeanName, beanDefinition);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    ```
+
+    一级缓存里面的bean是初始化完整的bean，我们应该获取里面的值，作为bean的属性
+
+    ```java
+    for (PropertyValue propertyValue : beanDefinition.getPropertyValues().getPropertyValueList()) {
+      String refName = propertyValue.getName();
+      // 我们只关心ref 类型的属性
+      if (firstCache.containsKey(refName)) {
+        Object exceptedValue = firstCache.get(refName); // 完全初始化的对象
+        Object invokeBean = beanDefinition.getBean(); // 需要修改这个对象里面的属性
+    
+        Object realClassInvokeBean = thirdCache.get(invokeBeanName);
+        Object realClassRefBean = thirdCache.get(refName);
+        // 反射赋值
+        try {
+          Method declaredMethod = realClassInvokeBean.getClass().getDeclaredMethod(
+            "set" +
+            propertyValue.getName().substring(0, 1).toUpperCase() +
+            propertyValue.getName().substring(1),
+            realClassRefBean.getClass()
+          );
+    
+          declaredMethod.setAccessible(true);
+          declaredMethod.invoke((realClassInvokeBean.getClass().cast(invokeBean)), (realClassRefBean.getClass().cast(exceptedValue)));
+        } catch (NoSuchMethodException e) {
+          Field declaredField = realClassInvokeBean.getClass().getDeclaredField(propertyValue.getName());
+          declaredField.setAccessible(true);
+          declaredField.set((realClassInvokeBean.getClass().cast(invokeBean)), (realClassRefBean.getClass().cast(exceptedValue)));
+        }
+      }
+    }
+    ```
+
+    
+

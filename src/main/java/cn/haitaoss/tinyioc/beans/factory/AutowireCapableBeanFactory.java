@@ -54,6 +54,8 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
         for (PropertyValue propertyValue : beanDefinition.getPropertyValues().getPropertyValueList()) {
             Object value = propertyValue.getValue();
             Object convertedValue = null;
+
+            // 如果是BeanReference 类型的
             if (value instanceof BeanReference) {
                 // ref 类型的就创建BeanReference
                 BeanReference beanReference = (BeanReference) value;
