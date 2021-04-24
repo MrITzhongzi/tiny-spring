@@ -11,8 +11,8 @@ import java.util.Set;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 18:03
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 18:03
  *
  */
 public class AspectJExpressionPointcut implements Pointcut, ClassFilter, MethodMatcher {

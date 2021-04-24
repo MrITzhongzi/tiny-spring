@@ -16,16 +16,16 @@ import java.util.Map;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 14:30
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 14:30
  *
  */
 public class XmlBeanDefinitionReaderTest {
     /**
      * 练习Document相关的API
      * @author haitao.chen
-     * @email
-     * @date 2021/4/17 2:55 下午
+     * email
+     * date 2021/4/17 2:55 下午
      */
     @Test
     public void testDocumentAPI() throws Exception {

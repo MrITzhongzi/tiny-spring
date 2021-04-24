@@ -2,8 +2,8 @@ package cn.haitaoss.tinyioc.beans;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 11:15
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 11:15
  * bean的内容及元数据，包装bean的实体
  */
 public class BeanDefinition {

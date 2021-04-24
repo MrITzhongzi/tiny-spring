@@ -2,8 +2,8 @@ package cn.haitaoss.tinyioc;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 17:23
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 17:23
  *
  */
 public class HelloWorldServiceImpl implements HelloWorldService {

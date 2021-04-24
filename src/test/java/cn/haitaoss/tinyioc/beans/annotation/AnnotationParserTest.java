@@ -13,8 +13,8 @@ import java.util.Set;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-23 11:03
+ * email haitaoss@aliyun.com
+ * date 2021-04-23 11:03
  *
  */
 public class AnnotationParserTest {
@@ -35,8 +35,8 @@ public class AnnotationParserTest {
     /**
      * 测试递归获取文件
      * @author haitao.chen
-     * @email
-     * @date 2021/4/23 1:53 下午
+     * email
+     * date 2021/4/23 1:53 下午
      */
     @Test
     public void testScanFile() throws ClassNotFoundException {

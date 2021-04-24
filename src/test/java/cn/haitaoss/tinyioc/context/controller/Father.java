@@ -7,8 +7,8 @@ import cn.haitaoss.tinyioc.context.service.Son;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-23 14:19
+ * email haitaoss@aliyun.com
+ * date 2021-04-23 14:19
  *
  */
 @Controller

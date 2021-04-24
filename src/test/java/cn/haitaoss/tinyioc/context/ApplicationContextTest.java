@@ -7,8 +7,8 @@ import org.junit.Test;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 16:40
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 16:40
  *
  */
 public class ApplicationContextTest {

@@ -4,8 +4,8 @@ import java.net.URL;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 14:07
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 14:07
  *
  */
 public class ResourceLoader {

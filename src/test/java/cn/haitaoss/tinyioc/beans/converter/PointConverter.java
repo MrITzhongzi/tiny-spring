@@ -6,8 +6,8 @@ import java.lang.reflect.Type;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-22 19:44
+ * email haitaoss@aliyun.com
+ * date 2021-04-22 19:44
  *
  */
 public class PointConverter implements Converter<Point> {

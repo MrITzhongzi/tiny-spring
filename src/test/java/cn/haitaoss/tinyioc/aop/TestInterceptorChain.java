@@ -7,8 +7,8 @@ import org.junit.Test;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-23 15:06
+ * email haitaoss@aliyun.com
+ * date 2021-04-23 15:06
  *
  */
 public class TestInterceptorChain {

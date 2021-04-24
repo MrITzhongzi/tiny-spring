@@ -6,8 +6,8 @@ import cn.haitaoss.tinyioc.beans.annotation.Value;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-22 22:13
+ * email haitaoss@aliyun.com
+ * date 2021-04-22 22:13
  *
  */
 @Component

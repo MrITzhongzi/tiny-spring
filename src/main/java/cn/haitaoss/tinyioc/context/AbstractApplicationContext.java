@@ -15,8 +15,8 @@ import java.util.Map;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 16:34
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 16:34
  *
  */
 public abstract class AbstractApplicationContext implements ApplicationContext {

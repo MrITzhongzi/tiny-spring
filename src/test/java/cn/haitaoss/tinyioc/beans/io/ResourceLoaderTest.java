@@ -5,8 +5,8 @@ import org.junit.Test;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 14:27
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 14:27
  *
  */
 public class ResourceLoaderTest {

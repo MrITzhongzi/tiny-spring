@@ -4,8 +4,8 @@ import java.lang.reflect.Type;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-22 19:31
+ * email haitaoss@aliyun.com
+ * date 2021-04-22 19:31
  *
  */
 public interface Converter<T> {

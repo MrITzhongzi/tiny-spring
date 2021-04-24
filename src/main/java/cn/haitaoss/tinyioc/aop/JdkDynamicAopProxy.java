@@ -9,8 +9,8 @@ import java.lang.reflect.Proxy;
 /**
  * 基于jdk的动态代理
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 17:13
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 17:13
  *
  */
 public class JdkDynamicAopProxy extends AbstractAopProxy implements InvocationHandler {

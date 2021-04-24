@@ -7,8 +7,8 @@ import org.junit.Test;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-18 17:20
+ * email haitaoss@aliyun.com
+ * date 2021-04-18 17:20
  *
  */
 public class Cglib2AopProxyTest {

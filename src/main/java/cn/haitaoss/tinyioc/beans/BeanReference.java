@@ -2,8 +2,8 @@ package cn.haitaoss.tinyioc.beans;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 15:10
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 15:10
  *
  */
 public class BeanReference {

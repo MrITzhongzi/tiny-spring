@@ -7,8 +7,8 @@ import java.lang.reflect.Method;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 17:09
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 17:09
  *
  */
 public class ReflectiveMethodInvocation implements MethodInvocation {

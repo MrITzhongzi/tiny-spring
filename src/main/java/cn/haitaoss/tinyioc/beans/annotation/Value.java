@@ -7,8 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-23 10:23
+ * email haitaoss@aliyun.com
+ * date 2021-04-23 10:23
  *
  */
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})

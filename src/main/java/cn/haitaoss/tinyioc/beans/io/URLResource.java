@@ -6,8 +6,8 @@ import java.net.URLConnection;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 14:18
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 14:18
  *
  */
 public class URLResource implements Resource {

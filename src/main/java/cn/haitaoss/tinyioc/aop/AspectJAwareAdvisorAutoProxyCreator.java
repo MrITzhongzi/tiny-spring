@@ -9,8 +9,8 @@ import java.util.List;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 21:34
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 21:34
  *
  */
 public class AspectJAwareAdvisorAutoProxyCreator implements BeanPostProcessor, BeanFactoryAware {

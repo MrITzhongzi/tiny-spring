@@ -2,8 +2,8 @@ package cn.haitaoss.tinyioc;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-22 19:42
+ * email haitaoss@aliyun.com
+ * date 2021-04-22 19:42
  *
  */
 public class Point {

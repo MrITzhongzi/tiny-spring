@@ -5,8 +5,8 @@ import org.junit.Test;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-18 16:23
+ * email haitaoss@aliyun.com
+ * date 2021-04-18 16:23
  * 测试循环应用
  */
 public class LoopReferenceTest {
@@ -15,8 +15,8 @@ public class LoopReferenceTest {
      * secondCache 存放会出现问题
      * firstCache 存放所有创建好的bean 也就是容器中所有的bean
      * @author haitao.chen
-     * @email
-     * @date 2021/4/19 5:27 下午
+     * email
+     * date 2021/4/19 5:27 下午
      */
     @Test
     public void test() throws Exception {

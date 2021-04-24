@@ -5,8 +5,8 @@ import org.aopalliance.intercept.MethodInterceptor;
 /**
  * 代理相关的元数据
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 17:02
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 17:02
  *
  */
 public class AdvisedSupport {

@@ -14,8 +14,8 @@ import java.io.InputStream;
 /**
  * 读取xml文件 得到beanDefinition 信息
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 14:12
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 14:12
  *
  */
 public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {

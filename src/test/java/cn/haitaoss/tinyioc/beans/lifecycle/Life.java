@@ -2,8 +2,8 @@ package cn.haitaoss.tinyioc.beans.lifecycle;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-22 21:40
+ * email haitaoss@aliyun.com
+ * date 2021-04-22 21:40
  *
  */
 public class Life implements InitializingBean, DisposableBean {

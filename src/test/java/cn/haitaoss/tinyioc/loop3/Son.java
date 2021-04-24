@@ -4,8 +4,8 @@ import net.sf.cglib.proxy.Factory;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-20 10:36
+ * email haitaoss@aliyun.com
+ * date 2021-04-20 10:36
  *
  */
 public class Son {

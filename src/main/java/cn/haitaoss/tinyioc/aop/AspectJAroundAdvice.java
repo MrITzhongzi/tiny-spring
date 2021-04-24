@@ -9,8 +9,8 @@ import java.lang.reflect.Method;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 21:32
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 21:32
  *
  */
 public class AspectJAroundAdvice implements Advice, MethodInterceptor {

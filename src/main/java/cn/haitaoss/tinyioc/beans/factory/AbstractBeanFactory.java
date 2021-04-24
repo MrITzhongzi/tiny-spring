@@ -19,8 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 11:48
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 11:48
  *
  */
 public abstract class AbstractBeanFactory implements BeanFactory {
@@ -66,8 +66,8 @@ public abstract class AbstractBeanFactory implements BeanFactory {
     /**
      * 创建单例bean
      * @author haitao.chen
-     * @email
-     * @date 2021/4/17 3:14 下午
+     * email
+     * date 2021/4/17 3:14 下午
      * @param name
      * @return java.lang.Object
      */
@@ -199,8 +199,8 @@ public abstract class AbstractBeanFactory implements BeanFactory {
     /**
      * 从容器中获取BeanPostProcessor 的子类或者子接口
      * @author haitao.chen
-     * @email
-     * @date 2021/4/17 9:28 下午
+     * email
+     * date 2021/4/17 9:28 下午
      * @param type
      * @return java.util.List
      */

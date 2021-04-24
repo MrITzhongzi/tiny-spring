@@ -6,8 +6,8 @@ import java.util.Map;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-22 19:32
+ * email haitaoss@aliyun.com
+ * date 2021-04-22 19:32
  *
  */
 public class ConverterFactory {

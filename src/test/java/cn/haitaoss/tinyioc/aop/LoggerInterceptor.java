@@ -5,8 +5,8 @@ import org.aopalliance.intercept.MethodInvocation;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-23 15:03
+ * email haitaoss@aliyun.com
+ * date 2021-04-23 15:03
  *
  */
 public class LoggerInterceptor implements MethodInterceptor {

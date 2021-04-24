@@ -4,8 +4,8 @@ import cn.haitaoss.tinyioc.beans.annotation.Autowired;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-22 19:07
+ * email haitaoss@aliyun.com
+ * date 2021-04-22 19:07
  *
  */
 public class Car implements Driveable {

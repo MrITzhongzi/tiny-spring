@@ -5,8 +5,8 @@ import java.util.List;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 13:12
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 13:12
  * 保存一个bean 里面的所有propertyValue
  * 为什么封装而不是直接在BeanDefinition 中使用List ?因为可以封装一些操作。
  */

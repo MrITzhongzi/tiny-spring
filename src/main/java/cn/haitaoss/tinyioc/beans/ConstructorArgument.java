@@ -6,8 +6,8 @@ import java.util.List;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-22 18:46
+ * email haitaoss@aliyun.com
+ * date 2021-04-22 18:46
  *
  */
 public class ConstructorArgument {

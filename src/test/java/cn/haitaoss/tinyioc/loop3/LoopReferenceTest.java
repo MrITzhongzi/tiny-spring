@@ -5,8 +5,8 @@ import org.junit.Test;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-20 10:38
+ * email haitaoss@aliyun.com
+ * date 2021-04-20 10:38
  *
  */
 public class LoopReferenceTest {

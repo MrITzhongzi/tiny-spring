@@ -7,8 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-22 21:51
+ * email haitaoss@aliyun.com
+ * date 2021-04-22 21:51
  *
  */
 @Retention(RetentionPolicy.RUNTIME)

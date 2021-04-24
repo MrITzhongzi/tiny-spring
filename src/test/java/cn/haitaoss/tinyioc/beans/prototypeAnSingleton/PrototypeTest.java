@@ -6,8 +6,8 @@ import org.junit.Test;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-22 22:17
+ * email haitaoss@aliyun.com
+ * date 2021-04-22 22:17
  *
  */
 public class PrototypeTest {

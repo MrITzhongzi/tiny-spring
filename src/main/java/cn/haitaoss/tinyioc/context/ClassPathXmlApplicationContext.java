@@ -13,8 +13,8 @@ import java.util.Map;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 16:36
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 16:36
  *
  */
 public class ClassPathXmlApplicationContext extends AbstractApplicationContext {

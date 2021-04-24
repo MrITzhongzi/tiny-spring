@@ -2,8 +2,8 @@ package cn.haitaoss.tinyioc.beans;
 
 /**
  * @author haitao.chen
- * @email haitaoss@aliyun.com
- * @date 2021-04-17 21:11
+ * email haitaoss@aliyun.com
+ * date 2021-04-17 21:11
  *
  */
 public class BeanInitializeLogger implements BeanPostProcessor {
