@@ -215,6 +215,14 @@ public abstract class AbstractBeanFactory implements BeanFactory {
                 beans.add(getBean(beanDefinitionName));
             }
         }
+        // 收集父容器里面
+        ApplicationContext context = this.context;
+        ApplicationContext parent = null;
+        while (context.getParent() != null) {
+            parent = context.getParent();
+            beans.addAll(parent.getBeanFactory().getBeansForType(type));
+            context = parent;
+        }
         return beans;
     }
 }

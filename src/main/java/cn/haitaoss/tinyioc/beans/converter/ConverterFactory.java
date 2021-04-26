@@ -27,12 +27,19 @@ public class ConverterFactory {
 
     private void initBaseMap() {
         converterMap.put(Integer.TYPE, new IntConverter());
+        converterMap.put(Integer.class, new IntConverter());
         converterMap.put(Short.TYPE, new ShortConverter());
+        converterMap.put(Short.class, new ShortConverter());
         converterMap.put(Long.TYPE, new LongConverter());
+        converterMap.put(Long.class, new LongConverter());
         converterMap.put(Character.TYPE, new CharConverter());
+        converterMap.put(Character.class, new CharConverter());
         converterMap.put(Boolean.TYPE, new BoolConverter());
+        converterMap.put(Boolean.class, new BoolConverter());
         converterMap.put(Float.TYPE, new FloatConverter());
+        converterMap.put(Float.class, new FloatConverter());
         converterMap.put(Double.TYPE, new DoubleConverter());
+        converterMap.put(Double.class, new DoubleConverter());
 
     }
 
